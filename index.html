@@ -496,14 +496,10 @@
 
         // Flour database
         const FLOUR_DATABASE = {
-            'caputo-pizzeria': { name: 'Caputo Pizzeria (Blue)', protein: 12.5, w: 260, type: '00' },
-            'caputo-cuoco': { name: 'Caputo Cuoco (Red)', protein: 13, w: 320, type: '00' },
-            'caputo-manitoba': { name: 'Caputo Manitoba Oro', protein: 14, w: 360, type: '00' },
-            'ka-bread': { name: 'King Arthur Bread Flour', protein: 12.7, w: 310, type: 'Bread' },
-            'ka-sir-lancelot': { name: 'King Arthur Sir Lancelot', protein: 14.2, w: 330, type: 'High Gluten' },
-            'ka-ap': { name: 'King Arthur All-Purpose', protein: 11.7, w: 200, type: 'AP' },
-            'whole-wheat': { name: 'Whole Wheat Bread Flour', protein: 13, w: 280, type: 'Whole Wheat' },
-            'type-1': { name: 'Type 1 Semi-Whole Wheat', protein: 12.5, w: 300, type: 'Type 1' }
+            'casillo-la8': { name: 'Casillo La 8 Plus Tipo 0', protein: 14.1, w: 350, type: 'Tipo 0', notes: 'Backbone/structure, long ferments, high spring' },
+            'casillo-superiore': { name: 'Casillo Pizza Superiore Tipo 0', protein: 13.5, w: 340, type: 'Tipo 0', notes: 'Primary pizza flour; great handling + spring' },
+            'casillo-aroma': { name: 'Casillo Aroma Type 1', protein: 13, w: 280, type: 'Type 1', notes: 'Flavor, color, crispness (best 10-25% blend)' },
+            'caputo-blue': { name: 'Caputo 00 Blue', protein: 12.5, w: 270, type: '00', notes: 'Classic Neapolitan 60-65% hydration' }
         };
 
         // Pizza style presets
@@ -513,9 +509,9 @@
                 hydration: 87.5,
                 salt: 2.8,
                 flourBlend: [
-                    { flourId: 'ka-sir-lancelot', percentage: 50, purpose: 'Strength for structure' },
-                    { flourId: 'caputo-cuoco', percentage: 35, purpose: 'Pizza flour base' },
-                    { flourId: 'type-1', percentage: 15, purpose: 'Color and flavor' }
+                    { flourId: 'casillo-la8', percentage: 50, purpose: 'Backbone/structure for high hydration' },
+                    { flourId: 'casillo-superiore', percentage: 35, purpose: 'Primary pizza flour base' },
+                    { flourId: 'casillo-aroma', percentage: 15, purpose: 'Flavor, color, crispness' }
                 ],
                 fermentMethod: 'biga',
                 bigaHydration: 65,
@@ -531,9 +527,9 @@
                 hydration: 80,
                 salt: 2.5,
                 flourBlend: [
-                    { flourId: 'caputo-manitoba', percentage: 60 },
-                    { flourId: 'caputo-cuoco', percentage: 30 },
-                    { flourId: 'type-1', percentage: 10 }
+                    { flourId: 'casillo-superiore', percentage: 60, purpose: 'Primary pizza flour' },
+                    { flourId: 'casillo-la8', percentage: 30, purpose: 'Extra strength' },
+                    { flourId: 'casillo-aroma', percentage: 10, purpose: 'Flavor & color' }
                 ],
                 fermentMethod: 'biga',
                 bigaHydration: 60,
@@ -549,7 +545,7 @@
                 hydration: 62,
                 salt: 2.5,
                 flourBlend: [
-                    { flourId: 'caputo-pizzeria', percentage: 100 }
+                    { flourId: 'caputo-blue', percentage: 100, purpose: 'Classic Neapolitan flour' }
                 ],
                 fermentMethod: 'direct',
                 diastatic: 0,
@@ -565,7 +561,7 @@
                 oil: 2,
                 sugar: 2,
                 flourBlend: [
-                    { flourId: 'ka-bread', percentage: 100 }
+                    { flourId: 'casillo-superiore', percentage: 100, purpose: 'Versatile pizza flour' }
                 ],
                 fermentMethod: 'direct',
                 diastatic: 0,
@@ -580,7 +576,7 @@
                 salt: 2.2,
                 oil: 3,
                 flourBlend: [
-                    { flourId: 'ka-bread', percentage: 100 }
+                    { flourId: 'casillo-superiore', percentage: 100, purpose: 'Strong base flour' }
                 ],
                 fermentMethod: 'direct',
                 diastatic: 0,
@@ -595,8 +591,8 @@
                 salt: 2.5,
                 oil: 3,
                 flourBlend: [
-                    { flourId: 'caputo-cuoco', percentage: 70 },
-                    { flourId: 'caputo-pizzeria', percentage: 30 }
+                    { flourId: 'casillo-superiore', percentage: 70, purpose: 'Primary structure' },
+                    { flourId: 'caputo-blue', percentage: 30, purpose: 'Extensibility' }
                 ],
                 fermentMethod: 'biga',
                 bigaHydration: 55,
@@ -610,19 +606,12 @@
         };
 
         // Dough ball weights by size
-        const DOUGH_WEIGHTS = {
-            '10': 220,
-            '12': 280,
-            '14': 350,
-            '16': 420,
-            '18': 520
-        };
 
         function PizzaCalculator() {
             // State management
             const [pizzaStyle, setPizzaStyle] = useState('daniel-gigi');
             const [numPizzas, setNumPizzas] = useState(4);
-            const [pizzaSize, setPizzaSize] = useState('12');
+            const [doughBallWeight, setDoughBallWeight] = useState(280);
             const [roomTemp, setRoomTemp] = useState(22);
             const [flourTemp, setFlourTemp] = useState(20);
             const [fridgeTemp, setFridgeTemp] = useState(3.5);
@@ -711,8 +700,7 @@
             const styleConfig = PIZZA_STYLES[pizzaStyle];
             const hydration = customHydration || styleConfig.hydration;
 
-            // Calculate total flour
-            const doughBallWeight = DOUGH_WEIGHTS[pizzaSize];
+            // Calculate total flour (doughBallWeight is now user input)
             const totalDough = numPizzas * doughBallWeight;
             const totalFlour = Math.round(totalDough / (1 + (hydration / 100) + (styleConfig.salt / 100) + ((styleConfig.oil || 0) / 100) + ((styleConfig.sugar || 0) / 100) + ((styleConfig.diastatic || 0) / 100)));
 
@@ -1071,7 +1059,7 @@
                     name: recipeName,
                     pizzaStyle,
                     numPizzas,
-                    pizzaSize,
+                    doughBallWeight,
                     roomTemp,
                     flourTemp,
                     fridgeTemp,
@@ -1102,7 +1090,7 @@
             const loadRecipe = (recipe) => {
                 setPizzaStyle(recipe.pizzaStyle);
                 setNumPizzas(recipe.numPizzas);
-                setPizzaSize(recipe.pizzaSize);
+                setDoughBallWeight(recipe.doughBallWeight || 280);
                 setRoomTemp(recipe.roomTemp);
                 setFlourTemp(recipe.flourTemp);
                 setFridgeTemp(recipe.fridgeTemp);
@@ -1141,7 +1129,7 @@
                 const data = {
                     style: styleConfig.name,
                     pizzas: numPizzas,
-                    size: pizzaSize + '"',
+                    doughBallWeight: doughBallWeight + 'g',
                     ingredients: styleConfig.fermentMethod === 'biga' ? ingredients.totals : ingredients,
                     flourBlend,
                     timeline: generateTimeline(),
@@ -1151,7 +1139,7 @@
 
                 const text = `PIZZA RECIPE - ${styleConfig.name}
 
-YIELD: ${numPizzas} × ${pizzaSize}" pizzas (${doughBallWeight}g each)
+YIELD: ${numPizzas} pizzas × ${doughBallWeight}g each
 
 TOTAL TIME: ${totalHours.toFixed(1)} hours (${(totalHours/24).toFixed(1)} days)
 Active work: ~30-45 minutes
@@ -1254,18 +1242,19 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                                         />
                                     </div>
                                     <div className="input-group">
-                                        <label className="input-label">Pizza Size (inches)</label>
-                                        <select
-                                            className="select-field"
-                                            value={pizzaSize}
-                                            onChange={(e) => setPizzaSize(e.target.value)}
-                                        >
-                                            <option value="10">10" (220g)</option>
-                                            <option value="12">12" (280g)</option>
-                                            <option value="14">14" (350g)</option>
-                                            <option value="16">16" (420g)</option>
-                                            <option value="18">18" (520g)</option>
-                                        </select>
+                                        <label className="input-label">Dough Ball Weight (grams)</label>
+                                        <input
+                                            type="number"
+                                            className="input-field"
+                                            value={doughBallWeight}
+                                            onChange={(e) => setDoughBallWeight(parseInt(e.target.value) || 280)}
+                                            min="100"
+                                            max="1000"
+                                            step="10"
+                                        />
+                                        <small style={{fontSize: '0.8rem', color: 'var(--crust)', marginTop: '0.5rem', display: 'block'}}>
+                                            Reference: 10"≈220g | 12"≈280g | 14"≈350g | 16"≈420g | 18"≈520g
+                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -1843,7 +1832,7 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                                                     <div>
                                                         <div style={{fontWeight: '500'}}>{recipe.name}</div>
                                                         <div style={{fontSize: '0.75rem', color: 'var(--crust)', marginTop: '0.25rem'}}>
-                                                            {PIZZA_STYLES[recipe.pizzaStyle].name} - {recipe.numPizzas}×{recipe.pizzaSize}"
+                                                            {PIZZA_STYLES[recipe.pizzaStyle].name} - {recipe.numPizzas}× {recipe.doughBallWeight || (recipe.pizzaSize && `${recipe.pizzaSize}" pizzas`) || '280'}g
                                                         </div>
                                                     </div>
                                                     <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteRecipe(i); }}>
