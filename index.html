@@ -619,6 +619,9 @@
             const [mixerType, setMixerType] = useState('medium-high');
             const [showBakersPercentage, setShowBakersPercentage] = useState(false);
             const [customHydration, setCustomHydration] = useState(null);
+            // Biga overrides (optional)
+            const [customBigaPercent, setCustomBigaPercent] = useState(null);
+            const [customBigaHydration, setCustomBigaHydration] = useState(null);
             const [savedRecipes, setSavedRecipes] = useState([]);
             const [recipeName, setRecipeName] = useState('');
             
@@ -645,6 +648,15 @@
                     setSavedRecipes(JSON.parse(saved));
                 }
             }, []);
+
+            // Clear biga overrides when switching to a non-biga style
+            useEffect(() => {
+                const cfg = PIZZA_STYLES[pizzaStyle];
+                if (cfg && cfg.fermentMethod !== 'biga') {
+                    setCustomBigaPercent(null);
+                    setCustomBigaHydration(null);
+                }
+            }, [pizzaStyle]);
 
             // Friction factors (verified for pizza dough mixing)
             const FRICTION_FACTORS = {
@@ -699,13 +711,15 @@
             // Get current style config
             const styleConfig = PIZZA_STYLES[pizzaStyle];
             const hydration = customHydration || styleConfig.hydration;
+            const bigaPercent = (customBigaPercent ?? styleConfig.bigaPercentage);
+            const bigaHydration = (customBigaHydration ?? styleConfig.bigaHydration);
 
             // Calculate total flour (doughBallWeight is now user input)
             const totalDough = numPizzas * doughBallWeight;
             const totalFlour = Math.round(totalDough / (1 + (hydration / 100) + (styleConfig.salt / 100) + ((styleConfig.oil || 0) / 100) + ((styleConfig.sugar || 0) / 100) + ((styleConfig.diastatic || 0) / 100)));
 
             // Calculate water temperature
-            const frictionFactor = FRICTION_FACTORS[mixerType];
+            const frictionFactor = (FRICTION_FACTORS[mixerType] ?? 22);
             const waterTemp = Math.round((desiredFDT * 4) - flourTemp - roomTemp - frictionFactor);
 
             // Yeast type conversions
@@ -785,18 +799,23 @@
 
             // Calculate ingredients
             let ingredients = {};
+            // For display in Baker's % mode (biga final yeast is not a simple subtraction in % terms)
+            let finalYeastBakersPct = null;
 
             if (styleConfig.fermentMethod === 'biga') {
                 // Biga ingredients
-                const bigaFlour = Math.round(totalFlour * (styleConfig.bigaPercentage / 100));
-                const bigaWater = Math.round(bigaFlour * (styleConfig.bigaHydration / 100));
+                const bigaFlour = Math.round(totalFlour * (bigaPercent / 100));
+                const bigaWater = Math.round(bigaFlour * (bigaHydration / 100));
                 const bigaYeast = (bigaFlour * 0.3 / 100).toFixed(1);
 
                 // Final dough ingredients
                 const finalFlour = totalFlour - bigaFlour;
                 const totalWater = Math.round(totalFlour * (hydration / 100));
                 const finalWater = totalWater - bigaWater;
-                const finalYeast = (parseFloat(totalYeast) - parseFloat(bigaYeast)).toFixed(1);
+                // Prevent negative final yeast if the yeast model yields very low totals
+                const finalYeastVal = Math.max(0, parseFloat(totalYeast) - parseFloat(bigaYeast));
+                const finalYeast = finalYeastVal.toFixed(1);
+                finalYeastBakersPct = totalFlour > 0 ? (finalYeastVal / totalFlour * 100) : 0;
 
                 ingredients = {
                     biga: {
@@ -1020,6 +1039,7 @@
             const warnings = [];
             if (hydration > 90) warnings.push('⚠️ Very high hydration (>90%) - extremely sticky dough, expert level only');
             if (hydration < 55) warnings.push('⚠️ Low hydration (<55%) - will be very stiff, consider increasing');
+            if (FRICTION_FACTORS[mixerType] === undefined) warnings.push('⚠️ Unknown mixer type friction factor - using default 22°C.');
             if (waterTemp < 5) warnings.push('⚠️ Water temperature too low - use ice water or adjust other temps');
             if (waterTemp > 45) warnings.push('⚠️ Water temperature too high - may kill yeast, reduce friction factor');
             if (fridgeTemp > 4.5) warnings.push('⚠️ Fridge temp >4.5°C - dough balls may spread, consider colder spot');
@@ -1032,6 +1052,15 @@
                 if (bigaHours > 24) warnings.push(`⚠️ Biga fermentation ${bigaHours.toFixed(1)}h - risk of over-fermentation (maximum 20h recommended)`);
                 if (bigaTemp < 10) warnings.push(`⚠️ Biga temp ${bigaTemp}°C is very cold - fermentation may stall`);
                 if (bigaTemp > 18) warnings.push(`⚠️ Biga temp ${bigaTemp}°C is too warm - risk of sour/alcoholic flavors`);
+
+                // Biga math validation
+                if (bigaPercent < 10 || bigaPercent > 90) warnings.push(`⚠️ Biga flour share is ${bigaPercent}% - outside typical range (10–90%)`);
+                if (bigaHydration < 45 || bigaHydration > 80) warnings.push(`⚠️ Biga hydration is ${bigaHydration}% - outside typical range (45–80%)`);
+                if (ingredients?.final?.water < 0) warnings.push('⚠️ Final dough water went negative - biga water exceeds total water. Lower biga hydration or biga %.');
+                // If the computed total yeast is lower than the fixed biga yeast (0.3%), final yeast will clamp to 0
+                const bigaFlourForWarn = Math.round(totalFlour * (bigaPercent / 100));
+                const bigaYeastForWarn = (bigaFlourForWarn * 0.3 / 100);
+                if (parseFloat(totalYeast) < bigaYeastForWarn) warnings.push('⚠️ Total yeast is lower than biga yeast (0.3% of biga flour). Final dough yeast has been clamped to 0g - consider increasing yeast (shorter/warmer ferment) or reducing biga yeast % in code.');
             }
             
             const bulkHours = getBulkHours();
@@ -1069,6 +1098,8 @@
                     ovenType,
                     useLemadyYeast,
                     customHydration,
+                    customBigaPercent,
+                    customBigaHydration,
                     bigaTemp,
                     bulkTemp,
                     proofTemp,
@@ -1088,21 +1119,27 @@
 
             // Load recipe
             const loadRecipe = (recipe) => {
+                const sanitizeNumber = (val, fallback) => {
+                    const n = typeof val === 'string' ? parseFloat(val) : val;
+                    return Number.isFinite(n) ? n : fallback;
+                };
                 setPizzaStyle(recipe.pizzaStyle);
-                setNumPizzas(recipe.numPizzas);
-                setDoughBallWeight(recipe.doughBallWeight || 280);
-                setRoomTemp(recipe.roomTemp);
-                setFlourTemp(recipe.flourTemp);
-                setFridgeTemp(recipe.fridgeTemp);
-                setDesiredFDT(recipe.desiredFDT);
+                setNumPizzas(sanitizeNumber(recipe.numPizzas, 4));
+                setDoughBallWeight(sanitizeNumber(recipe.doughBallWeight, 280));
+                setRoomTemp(sanitizeNumber(recipe.roomTemp, 22));
+                setFlourTemp(sanitizeNumber(recipe.flourTemp, 20));
+                setFridgeTemp(sanitizeNumber(recipe.fridgeTemp, 3.5));
+                setDesiredFDT(sanitizeNumber(recipe.desiredFDT, 24));
                 setMixerType(recipe.mixerType);
                 setYeastType(recipe.yeastType || 'instant');
                 setOvenType(recipe.ovenType || 'home');
                 setUseLemadyYeast(recipe.useLemadyYeast || false);
-                setCustomHydration(recipe.customHydration);
-                setBigaTemp(recipe.bigaTemp || 13);
-                setBulkTemp(recipe.bulkTemp || 22);
-                setProofTemp(recipe.proofTemp || 18);
+                setCustomHydration(recipe.customHydration === null || recipe.customHydration === undefined ? null : sanitizeNumber(recipe.customHydration, null));
+                setCustomBigaPercent(recipe.customBigaPercent === null || recipe.customBigaPercent === undefined ? null : sanitizeNumber(recipe.customBigaPercent, null));
+                setCustomBigaHydration(recipe.customBigaHydration === null || recipe.customBigaHydration === undefined ? null : sanitizeNumber(recipe.customBigaHydration, null));
+                setBigaTemp(sanitizeNumber(recipe.bigaTemp, 13));
+                setBulkTemp(sanitizeNumber(recipe.bulkTemp, 22));
+                setProofTemp(sanitizeNumber(recipe.proofTemp, 18));
                 setCustomBigaHours(recipe.customBigaHours || null);
                 setCustomBulkHours(recipe.customBulkHours || null);
                 setCustomColdHours(recipe.customColdHours || null);
@@ -1434,6 +1471,38 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                                                 step="0.5"
                                             />
                                         </div>
+
+                                        <div className="input-row">
+                                            <div className="input-group">
+                                                <label className="input-label">Biga % of total flour</label>
+                                                <input
+                                                    type="number"
+                                                    className="input-field"
+                                                    value={customBigaPercent ?? ''}
+                                                    placeholder={`Default: ${styleConfig.bigaPercentage}%`}
+                                                    onChange={(e) => setCustomBigaPercent(e.target.value ? parseFloat(e.target.value) : null)}
+                                                    min="10"
+                                                    max="90"
+                                                    step="1"
+                                                />
+                                            </div>
+                                            <div className="input-group">
+                                                <label className="input-label">Biga hydration %</label>
+                                                <input
+                                                    type="number"
+                                                    className="input-field"
+                                                    value={customBigaHydration ?? ''}
+                                                    placeholder={`Default: ${styleConfig.bigaHydration}%`}
+                                                    onChange={(e) => setCustomBigaHydration(e.target.value ? parseFloat(e.target.value) : null)}
+                                                    min="45"
+                                                    max="80"
+                                                    step="1"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="info-box" style={{marginTop: '1rem'}}>
+                                            <strong>Effective biga:</strong> {bigaPercent}% @ {bigaHydration}% hydration
+                                        </div>
                                     </>
                                 )}
 
@@ -1628,13 +1697,13 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                                                 <div className="ingredient-item">
                                                     <span className="ingredient-name">Flour</span>
                                                     <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${styleConfig.bigaPercentage}%` : `${ingredients.biga.flour}g`}
+                                                        {showBakersPercentage ? `${bigaPercent}%` : `${ingredients.biga.flour}g`}
                                                     </span>
                                                 </div>
                                                 <div className="ingredient-item">
                                                     <span className="ingredient-name">Water</span>
                                                     <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${styleConfig.bigaHydration}%` : `${ingredients.biga.water}g`}
+                                                        {showBakersPercentage ? `${bigaHydration}%` : `${ingredients.biga.water}g`}
                                                     </span>
                                                 </div>
                                                 <div className="ingredient-item">
@@ -1656,13 +1725,13 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                                                 <div className="ingredient-item">
                                                     <span className="ingredient-name">Flour</span>
                                                     <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${100 - styleConfig.bigaPercentage}%` : `${ingredients.final.flour}g`}
+                                                        {showBakersPercentage ? `${(100 - bigaPercent).toFixed(1)}%` : `${ingredients.final.flour}g`}
                                                     </span>
                                                 </div>
                                                 <div className="ingredient-item">
                                                     <span className="ingredient-name">Water ({waterTemp}°C)</span>
                                                     <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${(hydration - styleConfig.bigaHydration * styleConfig.bigaPercentage / 100).toFixed(1)}%` : `${ingredients.final.water}g`}
+                                                        {showBakersPercentage ? `${(hydration - bigaHydration * bigaPercent / 100).toFixed(1)}%` : `${ingredients.final.water}g`}
                                                     </span>
                                                 </div>
                                                 <div className="ingredient-item">
@@ -1674,7 +1743,7 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                                                 <div className="ingredient-item">
                                                     <span className="ingredient-name">Yeast</span>
                                                     <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${(yeastPercentage - 0.3).toFixed(2)}%` : `${ingredients.final.yeast}g`}
+                                                        {showBakersPercentage ? `${(finalYeastBakersPct ?? 0).toFixed(3)}%` : `${ingredients.final.yeast}g`}
                                                     </span>
                                                 </div>
                                                 {ingredients.final.diastatic && (
