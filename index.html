@@ -3,91 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>Pizza Dough Calculator - Professional Recipe Builder</title>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
     <script>
-      (function(){
-        var root=document.getElementById('root');
-        function show(msg){
-          var el=document.getElementById('root');
-          if(!el) return;
-          el.innerHTML='';
-          var pre=document.createElement('pre');
-          pre.style.whiteSpace='pre-wrap';
-          pre.style.padding='16px';
-          pre.style.margin='16px auto';
-          pre.style.maxWidth='900px';
-          pre.style.background='rgba(255,255,255,0.9)';
-          pre.style.border='1px solid rgba(0,0,0,0.12)';
-          pre.style.borderRadius='12px';
-          pre.style.fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-          pre.textContent=msg;
-          el.appendChild(pre);
-        }
-        function loadOne(urls, done){
-          var i=0;
-          function next(){
-            if(i>=urls.length){
-              done(new Error('Failed to load script from all sources: '+urls.join(', ')));
-              return;
+    (function(){
+      function show(msg){
+        var root = document.getElementById('root');
+        if(!root) { return; }
+        root.innerHTML = '';
+        var pre = document.createElement('pre');
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.padding = '16px';
+        pre.style.margin = '16px auto';
+        pre.style.maxWidth = '900px';
+        pre.style.background = 'rgba(255,255,255,0.85)';
+        pre.style.border = '1px solid rgba(0,0,0,0.12)';
+        pre.style.borderRadius = '12px';
+        pre.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+        pre.textContent = msg;
+        root.appendChild(pre);
+      }
+
+      function ready(fn){
+        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+        else fn();
+      }
+
+      ready(function(){
+        var err = null;
+        if(!window.React) err = 'React failed to load. Check network / CDN availability.';
+        else if(!window.ReactDOM) err = 'ReactDOM failed to load. Check network / CDN availability.';
+        else if(!window.Babel) err = 'Babel failed to load. Check network / CDN availability.';
+        if(err){ show(err); return; }
+
+        try {
+          if(!window.__BABEL_TRANSFORMED__){
+            window.__BABEL_TRANSFORMED__ = true;
+            if(window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+              window.Babel.transformScriptTags();
             }
-            var url=urls[i++];
-            var s=document.createElement('script');
-            s.crossOrigin='anonymous';
-            s.src=url;
-            var settled=false;
-            var t=setTimeout(function(){
-              if(settled) return;
-              settled=true;
-              try{s.remove();}catch(e){}
-              next();
-            }, 8000);
-            s.onload=function(){
-              if(settled) return;
-              settled=true;
-              clearTimeout(t);
-              done(null);
-            };
-            s.onerror=function(){
-              if(settled) return;
-              settled=true;
-              clearTimeout(t);
-              try{s.remove();}catch(e){}
-              next();
-            };
-            document.head.appendChild(s);
           }
-          next();
+        } catch(e){
+          show('Babel compile failed:\n\n' + (e && e.stack ? e.stack : String(e)));
         }
-        window.__gianspies_loadDeps = function(cb){
-          // React
-          loadOne([
-            'https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js',
-            'https://unpkg.com/react@17/umd/react.production.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js'
-          ], function(err){
-            if(err){ show('Could not load React\n\n'+err.message); cb(err); return; }
-            // ReactDOM
-            loadOne([
-              'https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js',
-              'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
-              'https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js'
-            ], function(err2){
-              if(err2){ show('Could not load ReactDOM\n\n'+err2.message); cb(err2); return; }
-              // Babel Standalone
-              loadOne([
-                'https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js',
-                'https://unpkg.com/@babel/standalone/babel.min.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js'
-              ], function(err3){
-                if(err3){ show('Could not load Babel\n\n'+err3.message); cb(err3); return; }
-                cb(null);
-              });
-            });
-          });
-        };
-      })();
+      });
+    })();
     </script>
-<title>Pizza Dough Calculator - Professional Recipe Builder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -152,7 +115,6 @@
             animation: fadeIn 0.8s ease-out 0.2s both;
         }
 
-        /* Tabs */
         .tabs {
             position: sticky;
             top: 0;
@@ -219,9 +181,6 @@
         @media (max-width: 968px) {
             .tabs { border-radius: 12px; }
             .tab-btn { flex: 1 1 auto; text-align: center; }
-        }
-
-        @media (max-width: 968px) {
             .calculator-grid {
                 grid-template-columns: 1fr;
             }
@@ -370,12 +329,6 @@
             font-size: 1.25rem;
             font-weight: 600;
             color: var(--tomato);
-        }
-
-        .ingredient-percentage {
-            font-size: 0.875rem;
-            color: var(--crust);
-            margin-left: 0.5rem;
         }
 
         .timeline-section {
@@ -639,16 +592,12 @@
     </style>
 </head>
 <body>
-    <div id="root" style="max-width:900px;margin:16px auto;font-family:Work Sans, sans-serif;color:#3A3226;">Loading…</div>
+    <div id="root">Loading...</div>
 
-    
-
-<script id="app-jsx" type="text/plain">
-// Show uncaught errors (helps avoid blank screen on mobile Safari)
+    <script type="text/babel" data-presets="env,react">
         window.addEventListener('error', (e) => {
             const container = document.getElementById('root');
             if (!container) return;
-            // If app already rendered, do not overwrite
             if (container.dataset && container.dataset.hasApp === '1') return;
             container.innerHTML = '';
             const pre = document.createElement('pre');
@@ -666,17 +615,16 @@
 
         const { useState, useEffect } = React;
 
-        // Flour database
         const FLOUR_DATABASE = {
             'casillo-la8': {
-                name: 'Casillo La 8 Plus Tipo 0 (with wheat germ)',
+                name: 'Casillo La 8 Plus Tipo 0',
                 protein: 14.1,
                 w: 350,
                 pl: 0.60,
                 type: 'Tipo 0',
                 hasWheatGerm: true,
-                bestUse: 'Backbone/structure, long ferments, high spring',
-                watchOuts: 'Wheat germ can raise enzyme activity; watch long warm ferments'
+                bestUse: 'Backbone/structure, long ferments',
+                watchOuts: 'Wheat germ enzyme activity'
             },
             'casillo-superiore': {
                 name: 'Casillo Pizza Superiore Tipo 0',
@@ -685,18 +633,18 @@
                 pl: 0.55,
                 type: 'Tipo 0',
                 hasWheatGerm: false,
-                bestUse: 'Primary pizza flour; great handling + spring',
-                watchOuts: 'Above ~75-80% hydration needs tight technique/temps'
+                bestUse: 'Primary pizza flour',
+                watchOuts: 'Above 75-80% hydration needs care'
             },
             'casillo-aroma': {
-                name: 'Casillo Aroma Type 1 (with wheat germ)',
+                name: 'Casillo Aroma Type 1',
                 protein: 13.0,
                 w: 280,
                 pl: 0.75,
                 type: 'Type 1',
                 hasWheatGerm: true,
-                bestUse: 'Flavor, color, crispness (in blends)',
-                watchOuts: 'Type 1/bran weakens gluten; best 10-25% blend'
+                bestUse: 'Flavor, color, crispness',
+                watchOuts: 'Best 10-25% blend'
             },
             'caputo-blue': {
                 name: 'Caputo 00 Blue',
@@ -705,27 +653,25 @@
                 pl: 0.55,
                 type: '00',
                 hasWheatGerm: false,
-                bestUse: 'Classic Neapolitan 60-65% hydration',
-                watchOuts: 'Less ideal for very long ferments or very high hydration'
+                bestUse: 'Classic Neapolitan 60-65%',
+                watchOuts: 'Less ideal for long ferments'
             }
         };
 
-        // Pizza style presets
         const PIZZA_STYLES = {
             'daniel-gigi': {
                 name: 'Daniel Gigi Style',
                 hydration: 87.5,
                 salt: 2.8,
                 flourBlend: [
-                    { flourId: 'casillo-la8', percentage: 50, purpose: 'Backbone/structure for high hydration' },
-                    { flourId: 'casillo-superiore', percentage: 35, purpose: 'Primary pizza flour base' },
-                    { flourId: 'casillo-aroma', percentage: 15, purpose: 'Flavor, color, crispness' }
+                    { flourId: 'casillo-la8', percentage: 50 },
+                    { flourId: 'casillo-superiore', percentage: 35 },
+                    { flourId: 'casillo-aroma', percentage: 15 }
                 ],
                 fermentMethod: 'biga',
                 bigaHydration: 65,
                 bigaPercentage: 50,
                 diastatic: 0.4,
-                autolysisMinutes: 20,
                 timeline: { biga: 17, bulk: 0.75, cold: 60, proof: 2.5 },
                 bakeTemp: { wood: 480, home: 260 },
                 bakeTime: { wood: 1.5, home: 7 }
@@ -735,15 +681,14 @@
                 hydration: 80,
                 salt: 2.5,
                 flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 60, purpose: 'Primary pizza flour' },
-                    { flourId: 'casillo-la8', percentage: 30, purpose: 'Extra strength' },
-                    { flourId: 'casillo-aroma', percentage: 10, purpose: 'Flavor & color' }
+                    { flourId: 'casillo-superiore', percentage: 60 },
+                    { flourId: 'casillo-la8', percentage: 30 },
+                    { flourId: 'casillo-aroma', percentage: 10 }
                 ],
                 fermentMethod: 'biga',
                 bigaHydration: 60,
                 bigaPercentage: 40,
                 diastatic: 0.3,
-                autolysisMinutes: 30,
                 timeline: { biga: 16, bulk: 1, cold: 48, proof: 3 },
                 bakeTemp: { wood: 400, home: 250 },
                 bakeTime: { wood: 2, home: 7 }
@@ -753,11 +698,10 @@
                 hydration: 62,
                 salt: 2.5,
                 flourBlend: [
-                    { flourId: 'caputo-blue', percentage: 100, purpose: 'Classic Neapolitan flour' }
+                    { flourId: 'caputo-blue', percentage: 100 }
                 ],
                 fermentMethod: 'direct',
                 diastatic: 0,
-                autolysisMinutes: 0,
                 timeline: { bulk: 2, cold: 24, proof: 4 },
                 bakeTemp: { wood: 485, home: 260 },
                 bakeTime: { wood: 1, home: 6 }
@@ -769,11 +713,9 @@
                 oil: 2,
                 sugar: 2,
                 flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 100, purpose: 'Versatile pizza flour' }
+                    { flourId: 'casillo-superiore', percentage: 100 }
                 ],
                 fermentMethod: 'direct',
-                diastatic: 0,
-                autolysisMinutes: 0,
                 timeline: { bulk: 2, cold: 48, proof: 3 },
                 bakeTemp: { wood: 370, home: 260 },
                 bakeTime: { wood: 5, home: 12 }
@@ -784,11 +726,9 @@
                 salt: 2.2,
                 oil: 3,
                 flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 100, purpose: 'Strong base flour' }
+                    { flourId: 'casillo-superiore', percentage: 100 }
                 ],
                 fermentMethod: 'direct',
-                diastatic: 0,
-                autolysisMinutes: 0,
                 timeline: { bulk: 2, cold: 24, proof: 3 },
                 bakeTemp: { wood: 260, home: 260 },
                 bakeTime: { wood: 12, home: 12 }
@@ -799,24 +739,20 @@
                 salt: 2.5,
                 oil: 3,
                 flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 70, purpose: 'Primary structure' },
-                    { flourId: 'caputo-blue', percentage: 30, purpose: 'Extensibility' }
+                    { flourId: 'casillo-superiore', percentage: 70 },
+                    { flourId: 'caputo-blue', percentage: 30 }
                 ],
                 fermentMethod: 'biga',
                 bigaHydration: 55,
                 bigaPercentage: 30,
                 diastatic: 0.3,
-                autolysisMinutes: 20,
                 timeline: { biga: 16, bulk: 1, cold: 24, proof: 3 },
                 bakeTemp: { wood: 300, home: 230 },
                 bakeTime: { wood: 15, home: 15 }
             }
         };
 
-        // Dough ball weights by size
-
         function PizzaCalculator() {
-            // State management
             const [activeTab, setActiveTab] = useState('setup');
             const [pizzaStyle, setPizzaStyle] = useState('daniel-gigi');
             const [numPizzas, setNumPizzas] = useState(4);
@@ -828,17 +764,12 @@
             const [mixerType, setMixerType] = useState('medium-high');
             const [showBakersPercentage, setShowBakersPercentage] = useState(false);
             const [customHydration, setCustomHydration] = useState(null);
-            const [autoFlourBlend, setAutoFlourBlend] = useState(true);
-            const [doughPriority, setDoughPriority] = useState('balanced'); // balanced | extensible | strength
             const [customBigaPercent, setCustomBigaPercent] = useState(null);
             const [customBigaHydration, setCustomBigaHydration] = useState(null);
             const [customBigaYeastPercent, setCustomBigaYeastPercent] = useState(0.30);
-
             const [savedRecipes, setSavedRecipes] = useState([]);
             const [recipeName, setRecipeName] = useState('');
-            
-            // New fermentation timing states
-            const [timelineMode, setTimelineMode] = useState('forward'); // 'forward' or 'reverse'
+            const [timelineMode, setTimelineMode] = useState('forward');
             const [bakeDateTime, setBakeDateTime] = useState('');
             const [bigaTemp, setBigaTemp] = useState(13);
             const [bulkTemp, setBulkTemp] = useState(22);
@@ -847,13 +778,10 @@
             const [customBulkHours, setCustomBulkHours] = useState(null);
             const [customColdHours, setCustomColdHours] = useState(null);
             const [customProofHours, setCustomProofHours] = useState(null);
-            
-            // Contemporary pizza features
             const [useLemadyYeast, setUseLemadyYeast] = useState(false);
-            const [ovenType, setOvenType] = useState('home'); // 'wood' or 'home'
-            const [yeastType, setYeastType] = useState('instant'); // 'instant', 'active-dry', 'fresh', 'lemady'
+            const [ovenType, setOvenType] = useState('home');
+            const [yeastType, setYeastType] = useState('instant');
 
-            // Load saved recipes from localStorage
             useEffect(() => {
                 const saved = localStorage.getItem('pizzaRecipes');
                 if (saved) {
@@ -866,161 +794,58 @@
                 try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
             };
 
-            // Friction factors (verified for pizza dough mixing)
             const FRICTION_FACTORS = {
                 'hand': 6,
                 'no-knead': 0,
                 'low': 14,
                 'medium': 22,
-                'spiral-low': 18,      // Spiral mixer - low speed
-                'spiral-high': 22,     // Spiral mixer - high speed  
+                'spiral-low': 18,
+                'spiral-high': 22,
                 'medium-high': 26,
                 'high': 28
             };
 
-            // Calculate fermentation duration based on temperature
-            // Using Q10 = 2 rule (fermentation rate doubles every 10°C)
             const calculateFermentationHours = (baseHours, baseTemp, actualTemp) => {
                 const tempDiff = actualTemp - baseTemp;
                 const q10Factor = Math.pow(2, tempDiff / 10);
                 return baseHours / q10Factor;
             };
 
-            // Auto flour blend recommender (based on your inventory + pizza style + hydration + fermentation profile)
-            const recommendFlourBlend = (styleKey, hydrationPct, totalHours, coldHours, priority = 'balanced') => {
-                const warmHours = Math.max(0, totalHours - coldHours);
-                const isNeapolitan = styleKey === 'neapolitan' || /neapolitan/i.test(PIZZA_STYLES[styleKey].name);
-                const isCrispierStyle = ['ny-style', 'detroit', 'roman'].includes(styleKey);
-
-                // 1) Base flour choice
-                let caputo = 0;
-                let superiore = 0;
-                let la8 = 0;
-                let aroma = 0;
-
-                if (isNeapolitan && hydrationPct <= 65 && totalHours <= 24) {
-                    caputo = 90;
-                    superiore = 0;
-                } else {
-                    superiore = 75;
-                }
-
-                // Priority tuning (intent presets)
-                // - strength: bias toward La8, slightly reduce Aroma
-                // - extensible: bias away from La8, allow more base flour, keep Aroma modest
-                const strengthBias = priority === 'strength' ? 1 : 0;
-                const extensibleBias = priority === 'extensible' ? 1 : 0;
-
-                // 2) Strength add (La 8) based on hydration and fermentation length (esp cold)
-                const needsStrength = hydrationPct >= 70 || totalHours >= 36 || coldHours >= 24;
-                if (needsStrength) {
-                    if (hydrationPct >= 76 || totalHours >= 72) la8 = 35;
-                    else if (hydrationPct >= 73 || totalHours >= 48) la8 = 25;
-                    else la8 = 15;
-
-                    // Apply intent
-                    if (strengthBias) la8 = Math.min(40, la8 + 5);
-                    if (extensibleBias) la8 = Math.max(0, la8 - 7);
-
-                    // Warm ferment caution for wheat germ: if lots of warm time, cap La8
-                    if (warmHours >= 18 && la8 > 20) la8 = 20;
-                }
-
-                // 3) Aroma for flavor (cap 25%)
-                if (isNeapolitan) {
-                    aroma = hydrationPct >= 66 || totalHours > 24 ? 5 : 0;
-                } else if (isCrispierStyle) {
-                    aroma = 18;
-                } else {
-                    aroma = 12;
-                }
-
-                // Intent: strength reduces Aroma slightly; extensible keeps Aroma modest
-                if (strengthBias) aroma = Math.max(8, aroma - 3);
-                if (extensibleBias) aroma = Math.min(aroma, 12);
-                aroma = Math.min(25, aroma);
-
-                // 4) Normalize so totals = 100
-                // Start by reducing the base flour(s)
-                let remaining = 100 - (la8 + aroma);
-                if (caputo > 0) {
-                    caputo = Math.min(caputo, remaining);
-                    remaining -= caputo;
-                }
-                superiore = remaining;
-
-                // If caputo is used but conditions are too extreme, shift to superiore
-                if (caputo > 0 && (hydrationPct > 65 || totalHours > 24)) {
-                    superiore += caputo;
-                    caputo = 0;
-                }
-
-                const blend = [];
-                if (superiore > 0) blend.push({ flourId: 'casillo-superiore', percentage: superiore, purpose: 'Primary pizza flour base' });
-                if (la8 > 0) blend.push({ flourId: 'casillo-la8', percentage: la8, purpose: 'Strength/structure insurance for hydration & time' });
-                if (aroma > 0) blend.push({ flourId: 'casillo-aroma', percentage: aroma, purpose: 'Flavor/color/crispness (kept in safe range)' });
-                if (caputo > 0) blend.push({ flourId: 'caputo-blue', percentage: caputo, purpose: 'Classic Neapolitan feel (shorter ferment / lower hydration)' });
-
-                // Final rounding pass to ensure sums to 100
-                const sum = blend.reduce((a, b) => a + b.percentage, 0);
-                if (sum !== 100 && blend.length) {
-                    blend[0].percentage += (100 - sum);
-                }
-
-                // Provide reasoning string for UI
-                const intentLabel = priority === 'strength' ? 'Max strength/safety' : priority === 'extensible' ? 'Max extensibility' : 'Balanced';
-                const why = `${intentLabel} • Style: ${PIZZA_STYLES[styleKey].name} • Hydration: ${hydrationPct}% • Total: ${totalHours.toFixed(1)}h (Cold: ${coldHours.toFixed(1)}h)`;
-
-                return { blend, why };
-            };
-
-
-            // Get fermentation durations based on actual temperatures
             const getBigaHours = () => {
                 if (customBigaHours !== null) return customBigaHours;
-                // Base: 17 hours at 13°C
                 return calculateFermentationHours(17, 13, bigaTemp);
             };
 
             const getBulkHours = () => {
                 if (customBulkHours !== null) return customBulkHours;
-                // Base: 1 hour at 22°C for high hydration
-                // Shorter for direct dough, longer for biga dough
                 const baseHours = styleConfig.fermentMethod === 'biga' ? 0.75 : 2;
                 return calculateFermentationHours(baseHours, 22, bulkTemp);
             };
 
             const getColdFermentHours = () => {
                 if (customColdHours !== null) return customColdHours;
-                // Base: 60 hours at 3.5°C (Daniel Gigi style)
-                // Adjust based on actual fridge temp and style
                 const baseHours = styleConfig.timeline.cold || 48;
                 return calculateFermentationHours(baseHours, 3.5, fridgeTemp);
             };
 
             const getProofHours = () => {
                 if (customProofHours !== null) return customProofHours;
-                // Base: 2.5 hours at 18°C
                 const baseHours = styleConfig.timeline.proof || 3;
                 return calculateFermentationHours(baseHours, 18, proofTemp);
             };
 
-            // Get current style config
             const styleConfig = PIZZA_STYLES[pizzaStyle];
             const hydration = customHydration || styleConfig.hydration;
             const bigaPercent = (customBigaPercent !== null && !Number.isNaN(customBigaPercent)) ? customBigaPercent : (styleConfig.bigaPercentage || 0);
             const bigaHydration = (customBigaHydration !== null && !Number.isNaN(customBigaHydration)) ? customBigaHydration : (styleConfig.bigaHydration || 0);
             const bigaYeastPct = (customBigaYeastPercent !== null && !Number.isNaN(customBigaYeastPercent)) ? customBigaYeastPercent : 0.30;
 
-            // Calculate total flour (doughBallWeight is now user input)
             const totalDough = numPizzas * doughBallWeight;
             const totalFlour = Math.round(totalDough / (1 + (hydration / 100) + (styleConfig.salt / 100) + ((styleConfig.oil || 0) / 100) + ((styleConfig.sugar || 0) / 100) + ((styleConfig.diastatic || 0) / 100)));
 
-            // Calculate water temperature
             const frictionFactor = FRICTION_FACTORS[mixerType];
             const waterTemp = Math.round((desiredFDT * 4) - flourTemp - roomTemp - frictionFactor);
 
-            // Yeast type conversions
             const YEAST_CONVERSIONS = {
                 'instant': 1.0,
                 'active-dry': 1.25,
@@ -1028,7 +853,6 @@
                 'lemady': 1.0
             };
 
-            // Calculate average fermentation temperature (weighted by duration)
             const calculateAverageFermentTemp = () => {
                 const bigaHours = getBigaHours();
                 const bulkHours = getBulkHours();
@@ -1036,7 +860,7 @@
                 const proofHours = getProofHours();
                 const totalHours = bigaHours + bulkHours + coldHours + proofHours;
                 
-                if (totalHours === 0) return 15; // Default
+                if (totalHours === 0) return 15;
                 
                 const weightedTemp = (
                     bigaHours * bigaTemp +
@@ -1048,42 +872,32 @@
                 return weightedTemp;
             };
 
-            // Enhanced yeast calculation based on ACTUAL temperature-adjusted fermentation time + other factors
             const totalFermentHours = getBigaHours() + getBulkHours() + getColdFermentHours() + getProofHours();
             
-            // 1. Base percentage from fermentation time
             let baseYeast;
             if (totalFermentHours >= 90) baseYeast = 0.15;
             else if (totalFermentHours >= 60) baseYeast = 0.2;
             else if (totalFermentHours >= 30) baseYeast = 0.4;
             else baseYeast = 0.8;
             
-            // 2. Temperature adjustment
             const avgTemp = calculateAverageFermentTemp();
             let tempFactor = 1.0;
-            if (avgTemp > 18) tempFactor = 0.9;  // Warmer = less yeast needed
-            else if (avgTemp < 12) tempFactor = 1.1; // Colder = more yeast needed
+            if (avgTemp > 18) tempFactor = 0.9;
+            else if (avgTemp < 12) tempFactor = 1.1;
             
-            // 3. Salt adjustment
             const saltPercent = styleConfig.salt;
             let saltFactor = 1.0;
-            if (saltPercent > 2.5) saltFactor = 1.1;  // High salt inhibits = more yeast
-            else if (saltPercent < 2) saltFactor = 0.9; // Low salt = less yeast
+            if (saltPercent > 2.5) saltFactor = 1.1;
+            else if (saltPercent < 2) saltFactor = 0.9;
             
-            // 4. Hydration adjustment
             let hydrationFactor = 1.0;
-            if (hydration > 75) hydrationFactor = 0.95; // High hydration = slightly less
-            else if (hydration < 65) hydrationFactor = 1.05; // Low hydration = slightly more
+            if (hydration > 75) hydrationFactor = 0.95;
+            else if (hydration < 65) hydrationFactor = 1.05;
             
-            // 5. Calculate instant yeast equivalent
             const instantYeastPct = baseYeast * tempFactor * saltFactor * hydrationFactor;
-            
-            // 6. Convert for selected yeast type
             const yeastPercentage = instantYeastPct * YEAST_CONVERSIONS[yeastType];
-            
             const totalYeast = (totalFlour * yeastPercentage / 100).toFixed(1);
 
-            // Store calculation details for display
             const yeastCalc = {
                 baseYeast,
                 tempFactor,
@@ -1094,22 +908,17 @@
                 totalHours: totalFermentHours
             };
 
-
-            // Calculate ingredients
             let ingredients = {};
 
             if (styleConfig.fermentMethod === 'biga') {
-                // Biga ingredients (user-adjustable)
                 const bigaFlour = Math.round(totalFlour * (bigaPercent / 100));
                 const bigaWater = Math.round(bigaFlour * (bigaHydration / 100));
                 const bigaYeast = (bigaFlour * (bigaYeastPct / 100)).toFixed(1);
 
-                // Final dough ingredients
                 const finalFlour = totalFlour - bigaFlour;
                 const totalWater = Math.round(totalFlour * (hydration / 100));
                 const finalWater = totalWater - bigaWater;
 
-                // Prevent negative yeast in final dough
                 const yeastDiff = parseFloat(totalYeast) - parseFloat(bigaYeast);
                 const yeastWasClamped = yeastDiff < 0;
                 const finalYeastVal = Math.max(0, yeastDiff);
@@ -1134,24 +943,18 @@
                         flour: totalFlour,
                         water: Math.round(totalFlour * (hydration / 100)),
                         salt: Math.round(totalFlour * (styleConfig.salt / 100)),
-                        yeast: totalYeast,
-                        ...(styleConfig.diastatic && { diastatic: (totalFlour * styleConfig.diastatic / 100).toFixed(1) }),
-                        ...(styleConfig.oil && { oil: Math.round(totalFlour * styleConfig.oil / 100) }),
-                        ...(styleConfig.sugar && { sugar: Math.round(totalFlour * styleConfig.sugar / 100) })
+                        yeast: totalYeast
                     },
                     meta: {
                         bigaPercent,
                         bigaHydration,
                         bigaYeastPct,
-                        totalWater,
-                        bigaMass: bigaFlour + bigaWater + parseFloat(bigaYeast),
                         finalWaterNegative: finalWater < 0,
                         totalYeastLessThanBiga: parseFloat(totalYeast) < parseFloat(bigaYeast),
                         yeastWasClamped
                     }
                 };
             } else {
-                // Direct dough
                 ingredients = {
                     flour: totalFlour,
                     water: Math.round(totalFlour * (hydration / 100)),
@@ -1163,274 +966,19 @@
                 };
             }
 
-            // Calculate flour blend (auto-recommended or style preset)
             const flourBasis = (styleConfig.fermentMethod === 'biga' ? ingredients.totals.flour : ingredients.flour);
-            const rec = recommendFlourBlend(pizzaStyle, hydration, totalFermentHours, getColdFermentHours(), doughPriority);
-            const activeBlend = autoFlourBlend ? rec.blend : styleConfig.flourBlend;
-            const flourBlendWhy = autoFlourBlend ? rec.why : null;
-
-            const flourBlend = activeBlend.map(item => ({
+            const flourBlend = styleConfig.flourBlend.map(item => ({
                 ...item,
                 flourData: FLOUR_DATABASE[item.flourId],
                 grams: Math.round(flourBasis * (item.percentage / 100))
             }));
 
-            // Generate timeline
-            const generateTimeline = () => {
-                const timeline = [];
-                let startTime;
-
-                // Get actual fermentation durations based on temperatures
-                const bigaHours = styleConfig.fermentMethod === 'biga' ? getBigaHours() : 0;
-                const bulkHours = getBulkHours();
-                const coldHours = getColdFermentHours();
-                const proofHours = getProofHours();
-
-                if (timelineMode === 'reverse' && bakeDateTime) {
-                    // Reverse mode: Start from bake time and work backwards
-                    const bakeTime = new Date(bakeDateTime);
-                    
-                    timeline.push({
-                        time: bakeTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                        action: '🍕 BAKE TIME!',
-                        detail: `Oven at ${styleConfig.bakeTemp[ovenType]}°C (${ovenType === 'wood' ? 'wood-fired' : 'home oven'}). Bake for ~${styleConfig.bakeTime[ovenType]} min. Stretch gently, top with ${Math.round(numPizzas * 70)}g sauce, ${Math.round(numPizzas * 90)}g cheese. Watch for leopard spots!`,
-                        highlight: true
-                    });
-
-                    const proofStart = new Date(bakeTime.getTime() - proofHours * 60 * 60 * 1000);
-                    timeline.unshift({
-                        time: proofStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                        action: 'Remove from fridge for final proof',
-                        detail: `Proof at ${proofTemp}°C for ${proofHours.toFixed(1)} hours. Watch for jiggle test (wobbles like jello), poke test (springs back slowly in 3-5 sec), visible bubbles throughout.`,
-                        temperature: `${proofTemp}°C`
-                    });
-
-                    const coldFermentStart = new Date(proofStart.getTime() - coldHours * 60 * 60 * 1000);
-                    timeline.unshift({
-                        time: coldFermentStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                        action: `Ball into ${numPizzas} × ${doughBallWeight}g portions`,
-                        detail: `Create surface tension by tucking edges under while rotating. Oil coating (1-2 tsp per ball). Place in fridge at ${fridgeTemp}°C for ${coldHours.toFixed(1)} hours. First 2h uncovered, then cover tightly.`,
-                        temperature: `${fridgeTemp}°C for ${coldHours.toFixed(1)}h`
-                    });
-
-                    if (styleConfig.fermentMethod === 'biga') {
-                        const finalDoughTime = new Date(coldFermentStart.getTime() - bulkHours * 60 * 60 * 1000);
-                        
-                        // Add autolysis if configured
-                        if (styleConfig.autolysisMinutes > 0) {
-                            const autolysisStart = new Date(finalDoughTime.getTime() - (styleConfig.autolysisMinutes / 60) * 60 * 60 * 1000);
-                            
-                            timeline.unshift({
-                                time: finalDoughTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                                action: 'Complete final dough mixing',
-                                detail: `After ${styleConfig.autolysisMinutes} min autolysis: add yeast/malt, then salt, then bassinage remaining ${Math.round(ingredients.final.water * 0.4)}g water slowly. Mix medium-high 8-12 min until windowpane. Bulk ${bulkHours.toFixed(1)}h at ${bulkTemp}°C with 2-3 stretch & folds.`,
-                                temperature: `${bulkTemp}°C for ${bulkHours.toFixed(1)}h`
-                            });
-                            
-                            timeline.unshift({
-                                time: autolysisStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                                action: `⏱️ Start autolysis (${styleConfig.autolysisMinutes} min)`,
-                                detail: `Biga should be tripled, fibrous, sweet-smelling. Dissolve in ${Math.round(ingredients.final.water * 0.6)}g water. Add all ${ingredients.final.flour}g flour, mix gently 2-3 min. Rest ${styleConfig.autolysisMinutes} min at room temp. This develops gluten naturally.`,
-                                temperature: `Room temp for ${styleConfig.autolysisMinutes} min`
-                            });
-                            
-                            var adjustedBigaEndTime = autolysisStart;
-                        } else {
-                            timeline.unshift({
-                                time: finalDoughTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                                action: 'Mix final dough',
-                                detail: `Biga should be tripled, fibrous, sweet-smelling. Dissolve in water, add all flour, yeast, salt. Mix medium-high 8-12 min until windowpane. Bulk ${bulkHours.toFixed(1)}h at ${bulkTemp}°C. Perform 2-3 sets of stretch & folds.`,
-                                temperature: `${bulkTemp}°C for ${bulkHours.toFixed(1)}h`
-                            });
-                            
-                            var adjustedBigaEndTime = finalDoughTime;
-                        }
-
-                        const bigaStart = new Date(adjustedBigaEndTime.getTime() - bigaHours * 60 * 60 * 1000);
-                        timeline.unshift({
-                            time: bigaStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: `🌾 START HERE - Mix biga`,
-                            detail: `Combine ${ingredients.biga.flour}g flour, ${ingredients.biga.water}g cold water, ${ingredients.biga.yeast}g ${useLemadyYeast ? 'Lemady ' : ''}yeast. Mix to shaggy mass, don't knead. Target temp: 14-16°C. Ferment at ${bigaTemp}°C for ${bigaHours.toFixed(1)}h until tripled, fibrous, sweet-smelling.`,
-                            temperature: `${bigaTemp}°C for ${bigaHours.toFixed(1)}h`,
-                            highlight: true
-                        });
-                    } else {
-                        const mixTime = new Date(coldFermentStart.getTime() - bulkHours * 60 * 60 * 1000);
-                        timeline.unshift({
-                            time: mixTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: `🌾 START HERE - Mix dough`,
-                            detail: `Combine all ingredients. Mix until windowpane test passes. Target FDT: ${desiredFDT}°C (use ${waterTemp}°C water). Bulk ferment ${bulkHours.toFixed(1)}h at ${bulkTemp}°C.`,
-                            temperature: `${bulkTemp}°C for ${bulkHours.toFixed(1)}h`,
-                            highlight: true
-                        });
-                    }
-
-                } else {
-                    // Forward mode: Start from now
-                    const now = new Date();
-
-                    if (styleConfig.fermentMethod === 'biga') {
-                        const bigaStart = new Date(now);
-                        timeline.push({
-                            time: bigaStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: `🌾 Mix biga`,
-                            detail: `Combine ${ingredients.biga.flour}g flour, ${ingredients.biga.water}g cold water, ${ingredients.biga.yeast}g yeast. Mix to shaggy mass, don't knead. Target temp: 14-16°C. Ferment at ${bigaTemp}°C for ${bigaHours.toFixed(1)} hours.`,
-                            temperature: `${bigaTemp}°C for ${bigaHours.toFixed(1)}h`,
-                            highlight: true
-                        });
-
-                        const finalDoughTime = new Date(bigaStart.getTime() + bigaHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: finalDoughTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: 'Mix final dough',
-                            detail: `Biga should be tripled, fibrous, sweet-smelling. Dissolve in ${Math.round(ingredients.final.water * 0.6)}g water, add all flour, autolyse 20 min. Add yeast/malt, then salt, then bassinage remaining water. Mix on medium-high 8-12 min until windowpane. Bulk ferment ${bulkHours.toFixed(1)}h at ${bulkTemp}°C.`,
-                            temperature: `${bulkTemp}°C for ${bulkHours.toFixed(1)}h`
-                        });
-
-                        const ballTime = new Date(finalDoughTime.getTime() + bulkHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: ballTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: `Ball into ${numPizzas} × ${doughBallWeight}g portions`,
-                            detail: `Create surface tension, oil coating, refrigerate at ${fridgeTemp}°C for ${coldHours.toFixed(1)} hours.`,
-                            temperature: `${fridgeTemp}°C for ${coldHours.toFixed(1)}h`
-                        });
-
-                        const proofStart = new Date(ballTime.getTime() + coldHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: proofStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: 'Remove from fridge for final proof',
-                            detail: `Proof at ${proofTemp}°C for ${proofHours.toFixed(1)} hours. Watch for jiggle test, poke test, visible bubbles.`,
-                            temperature: `${proofTemp}°C for ${proofHours.toFixed(1)}h`
-                        });
-
-                        const bakeTime = new Date(proofStart.getTime() + proofHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: bakeTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: '🍕 BAKE TIME!',
-                            detail: `Stretch gently, top with ${Math.round(numPizzas * 70)}g sauce total, ${Math.round(numPizzas * 90)}g cheese total. Bake hot and fast.`,
-                            highlight: true
-                        });
-                    } else {
-                        timeline.push({
-                            time: now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: '🌾 Mix dough',
-                            detail: `Combine all ingredients. Mix until windowpane test passes. Target FDT: ${desiredFDT}°C (use ${waterTemp}°C water). Bulk ferment ${bulkHours.toFixed(1)}h at ${bulkTemp}°C.`,
-                            temperature: `${bulkTemp}°C for ${bulkHours.toFixed(1)}h`,
-                            highlight: true
-                        });
-
-                        const ballTime = new Date(now.getTime() + bulkHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: ballTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: `Ball into ${numPizzas} × ${doughBallWeight}g portions`,
-                            detail: `Create surface tension, refrigerate at ${fridgeTemp}°C for ${coldHours.toFixed(1)} hours.`,
-                            temperature: `${fridgeTemp}°C for ${coldHours.toFixed(1)}h`
-                        });
-
-                        const proofStart = new Date(ballTime.getTime() + coldHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: proofStart.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: 'Remove from fridge for final proof',
-                            detail: `Proof at ${proofTemp}°C for ${proofHours.toFixed(1)} hours. Watch for jiggle test, poke test, visible bubbles.`,
-                            temperature: `${proofTemp}°C for ${proofHours.toFixed(1)}h`
-                        });
-
-                        const bakeTime = new Date(proofStart.getTime() + proofHours * 60 * 60 * 1000);
-                        timeline.push({
-                            time: bakeTime.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
-                            action: '🍕 BAKE TIME!',
-                            detail: `Stretch gently, top with ${Math.round(numPizzas * 70)}g sauce total, ${Math.round(numPizzas * 90)}g cheese total. Bake hot and fast.`,
-                            highlight: true
-                        });
-                    }
-                }
-
-                return timeline;
-            };
-
-            // Validation warnings
             const warnings = [];
-            if (hydration > 90) warnings.push('⚠️ Very high hydration (>90%) - extremely sticky dough, expert level only');
-            if (hydration < 55) warnings.push('⚠️ Low hydration (<55%) - will be very stiff, consider increasing');
-            if (waterTemp < 5) warnings.push('⚠️ Water temperature too low - use ice water or adjust other temps');
-            if (waterTemp > 45) warnings.push('⚠️ Water temperature too high - may kill yeast, reduce friction factor');
-            if (fridgeTemp > 4.5) warnings.push('⚠️ Fridge temp >4.5°C - dough balls may spread, consider colder spot');
-            if (fridgeTemp < 2) warnings.push('⚠️ Fridge temp <2°C - fermentation may be too slow');
-            
-            // Fermentation timing warnings
-            if (styleConfig.fermentMethod === 'biga') {
-                const bigaHours = getBigaHours();
-                if (bigaHours < 12) warnings.push(`⚠️ Biga fermentation only ${bigaHours.toFixed(1)}h - may be under-fermented (minimum 12h recommended)`);
-                if (bigaHours > 24) warnings.push(`⚠️ Biga fermentation ${bigaHours.toFixed(1)}h - risk of over-fermentation (maximum 20h recommended)`);
-                if (bigaTemp < 10) warnings.push(`⚠️ Biga temp ${bigaTemp}°C is very cold - fermentation may stall`);
-                if (bigaTemp > 18) warnings.push(`⚠️ Biga temp ${bigaTemp}°C is too warm - risk of sour/alcoholic flavors`);
-            }
-            
-            const bulkHours = getBulkHours();
-            if (bulkHours < 0.5) warnings.push(`⚠️ Bulk fermentation only ${(bulkHours * 60).toFixed(0)} min - dough may not relax enough`);
-            if (bulkHours > 4) warnings.push(`⚠️ Bulk fermentation ${bulkHours.toFixed(1)}h - may over-proof before balling`);
-            
-            const coldHours = getColdFermentHours();
-            if (coldHours < 18) warnings.push(`⚠️ Cold fermentation only ${coldHours.toFixed(1)}h - flavor development may be limited`);
-            if (coldHours > 96) warnings.push(`⚠️ Cold fermentation ${coldHours.toFixed(1)}h (${(coldHours/24).toFixed(1)} days) - risk of over-fermentation`);
-            
-            const proofHours = getProofHours();
-            if (proofHours < 1.5) warnings.push(`⚠️ Final proof only ${proofHours.toFixed(1)}h - balls may not relax enough`);
-            if (proofHours > 6) warnings.push(`⚠️ Final proof ${proofHours.toFixed(1)}h - risk of over-proofing (balls will spread)`);
-            if (proofTemp < 15) warnings.push(`⚠️ Proof temp ${proofTemp}°C is too cold - will take very long`);
-            if (proofTemp > 24) warnings.push(`⚠️ Proof temp ${proofTemp}°C is too warm - may over-proof quickly`);
+            if (hydration > 90) warnings.push('⚠️ Very high hydration (>90%) - expert level');
+            if (hydration < 55) warnings.push('⚠️ Low hydration (<55%) - consider increasing');
+            if (waterTemp < 5) warnings.push('⚠️ Water temp too low - use ice water');
+            if (waterTemp > 45) warnings.push('⚠️ Water temp too high - may kill yeast');
 
-            // Dough health (non-blocking) – quick risk assessment
-            const doughHealth = (() => {
-                let score = 0;
-                const notes = [];
-                const coldHours = getColdFermentHours();
-                const warmHours = Math.max(0, totalFermentHours - coldHours);
-
-                // Hydration load
-                if (hydration >= 90) { score += 5; notes.push('Extremely high hydration'); }
-                else if (hydration >= 85) { score += 4; notes.push('Very high hydration'); }
-                else if (hydration >= 80) { score += 3; notes.push('High hydration'); }
-                else if (hydration >= 75) { score += 2; }
-
-                // Time load
-                if (totalFermentHours >= 96) { score += 3; notes.push('Very long fermentation'); }
-                else if (totalFermentHours >= 72) { score += 2; notes.push('Long fermentation'); }
-
-                // Warm time (enzyme/proteolysis risk)
-                if (warmHours >= 24) { score += 3; notes.push('Long warm time'); }
-                else if (warmHours >= 18) { score += 2; }
-
-                // Wheat germ / bran flours + warm time
-                const wheatGermPct = flourBlend.reduce((acc, f) => acc + (f.flourData?.hasWheatGerm ? (f.percentage || 0) : 0), 0);
-                if (wheatGermPct >= 25 && warmHours >= 18) {
-                    score += 2;
-                    notes.push('High wheat germ/bran + warm time (enzyme activity risk)');
-                    warnings.push('⚠️ Wheat germ/bran flours + long warm fermentation can weaken dough (enzymes). Consider more cold time or reduce warm hours.');
-                }
-
-                // Caputo outside its comfort zone
-                const hasCaputo = flourBlend.some(f => f.flourId === 'caputo-blue');
-                if (hasCaputo && (hydration > 65 || totalFermentHours > 24)) {
-                    score += 3;
-                    notes.push('Caputo used outside classic Neapolitan range');
-                }
-
-                // Biga-specific sanity
-                if (styleConfig.fermentMethod === 'biga') {
-                    if (ingredients?.meta?.finalWaterNegative) { score += 5; notes.push('Biga water exceeds total water'); }
-                    if (ingredients?.meta?.yeastWasClamped) { score += 2; notes.push('Total yeast < biga yeast (final yeast clamped)'); }
-                }
-
-                let level = 'Stable';
-                let cls = 'health-green';
-                if (score >= 6) { level = 'High risk / sensitive'; cls = 'health-red'; }
-                else if (score >= 3) { level = 'Sensitive'; cls = 'health-yellow'; }
-
-                return { score, level, cls, warmHours, coldHours, notes };
-            })();
-
-            // Save recipe
             const saveRecipe = () => {
                 if (!recipeName.trim()) {
                     alert('Please enter a recipe name');
@@ -1449,7 +997,6 @@
                     mixerType,
                     yeastType,
                     ovenType,
-                    useLemadyYeast,
                     customHydration,
                     bigaTemp,
                     bulkTemp,
@@ -1458,8 +1005,6 @@
                     customBulkHours,
                     customColdHours,
                     customProofHours,
-                    autoFlourBlend,
-                    doughPriority,
                     customBigaPercent,
                     customBigaHydration,
                     customBigaYeastPercent,
@@ -1473,143 +1018,14 @@
                 alert('Recipe saved!');
             };
 
-            // Load recipe
-            const loadRecipe = (recipe) => {
-                const asNum = (v, fallback) => {
-                    const n = typeof v === 'number' ? v : parseFloat(v);
-                    return Number.isFinite(n) ? n : fallback;
-                };
-
-                setPizzaStyle(recipe.pizzaStyle);
-                setNumPizzas(asNum(recipe.numPizzas, 4));
-                setDoughBallWeight(asNum(recipe.doughBallWeight, 280));
-                setRoomTemp(asNum(recipe.roomTemp, 22));
-                setFlourTemp(asNum(recipe.flourTemp, 20));
-                setFridgeTemp(asNum(recipe.fridgeTemp, 3.5));
-                setDesiredFDT(asNum(recipe.desiredFDT, 24));
-                setMixerType(recipe.mixerType || 'medium-high');
-                setYeastType(recipe.yeastType || 'instant');
-                setOvenType(recipe.ovenType || 'home');
-                setUseLemadyYeast(!!recipe.useLemadyYeast);
-                setCustomHydration(recipe.customHydration !== null && recipe.customHydration !== undefined ? asNum(recipe.customHydration, null) : null);
-
-                setBigaTemp(asNum(recipe.bigaTemp, 13));
-                setBulkTemp(asNum(recipe.bulkTemp, 22));
-                setProofTemp(asNum(recipe.proofTemp, 18));
-
-                setCustomBigaHours(recipe.customBigaHours !== null && recipe.customBigaHours !== undefined ? asNum(recipe.customBigaHours, null) : null);
-                setCustomBulkHours(recipe.customBulkHours !== null && recipe.customBulkHours !== undefined ? asNum(recipe.customBulkHours, null) : null);
-                setCustomColdHours(recipe.customColdHours !== null && recipe.customColdHours !== undefined ? asNum(recipe.customColdHours, null) : null);
-                setCustomProofHours(recipe.customProofHours !== null && recipe.customProofHours !== undefined ? asNum(recipe.customProofHours, null) : null);
-
-                setAutoFlourBlend(recipe.autoFlourBlend !== undefined ? !!recipe.autoFlourBlend : true);
-                setDoughPriority(recipe.doughPriority || 'balanced');
-                setCustomBigaPercent(recipe.customBigaPercent !== null && recipe.customBigaPercent !== undefined ? asNum(recipe.customBigaPercent, null) : null);
-                setCustomBigaHydration(recipe.customBigaHydration !== null && recipe.customBigaHydration !== undefined ? asNum(recipe.customBigaHydration, null) : null);
-                setCustomBigaYeastPercent(asNum(recipe.customBigaYeastPercent, 0.30));
-            };
-
-            // Delete recipe
-            const deleteRecipe = (index) => {
-                if (confirm('Delete this recipe?')) {
-                    const updated = savedRecipes.filter((_, i) => i !== index);
-                    setSavedRecipes(updated);
-                    localStorage.setItem('pizzaRecipes', JSON.stringify(updated));
-                }
-            };
-
-            // Export recipe
-            const exportRecipe = () => {
-                const bigaHours = styleConfig.fermentMethod === 'biga' ? getBigaHours() : 0;
-                const bulkHours = getBulkHours();
-                const coldHours = getColdFermentHours();
-                const proofHours = getProofHours();
-                const totalHours = bigaHours + bulkHours + coldHours + proofHours;
-
-                const data = {
-                    style: styleConfig.name,
-                    pizzas: numPizzas,
-                    doughBallWeight: doughBallWeight + 'g',
-                    ingredients: styleConfig.fermentMethod === 'biga' ? ingredients.totals : ingredients,
-                    flourBlend,
-                    timeline: generateTimeline(),
-                    waterTemp,
-                    hydration
-                };
-
-                const text = `PIZZA RECIPE - ${styleConfig.name}
-
-YIELD: ${numPizzas} pizzas × ${doughBallWeight}g each
-
-TOTAL TIME: ${totalHours.toFixed(1)} hours (${(totalHours/24).toFixed(1)} days)
-Active work: ~30-45 minutes
-
-FLOUR BLEND:
-${flourBlend.map(f => `  ${f.grams}g ${f.flourData.name} (${f.percentage}%) - ${f.flourData.protein}% protein, W${f.flourData.w}`).join('\n')}
-
-${styleConfig.fermentMethod === 'biga' ? `BIGA (${bigaTemp}°C for ${bigaHours.toFixed(1)}h):
-  ${ingredients.biga.flour}g flour
-  ${ingredients.biga.water}g water (cold)
-  ${ingredients.biga.yeast}g instant yeast
-  Mix to shaggy mass, don't knead. Ferment until tripled, fibrous, sweet-smelling.
-
-FINAL DOUGH (bulk ferment ${bulkTemp}°C for ${bulkHours.toFixed(1)}h):
-  All of the biga
-  ${ingredients.final.flour}g flour
-  ${ingredients.final.water}g water (temp: ${waterTemp}°C)
-  ${ingredients.final.salt}g salt
-  ${ingredients.final.yeast}g yeast${ingredients.final.diastatic ? `\n  ${ingredients.final.diastatic}g diastatic malt` : ''}${ingredients.final.oil ? `\n  ${ingredients.final.oil}g olive oil` : ''}${ingredients.final.sugar ? `\n  ${ingredients.final.sugar}g sugar` : ''}
-  Dissolve biga, add flour, autolyse 20min. Add yeast/malt, salt, bassinage water.
-  Mix ${mixerType} speed until windowpane. Target FDT: ${desiredFDT}°C.
-
-TOTALS:
-  ${ingredients.totals.flour}g flour (100%)
-  ${ingredients.totals.water}g water (${hydration}%)
-  ${ingredients.totals.salt}g salt (${styleConfig.salt}%)
-  ${ingredients.totals.yeast}g yeast` : `INGREDIENTS (bulk ferment ${bulkTemp}°C for ${bulkHours.toFixed(1)}h):
-  ${ingredients.flour}g flour (100%)
-  ${ingredients.water}g water (${hydration}%) - temp: ${waterTemp}°C
-  ${ingredients.salt}g salt (${styleConfig.salt}%)
-  ${ingredients.yeast}g yeast${ingredients.diastatic ? `\n  ${ingredients.diastatic}g diastatic malt` : ''}${ingredients.oil ? `\n  ${ingredients.oil}g olive oil` : ''}${ingredients.sugar ? `\n  ${ingredients.sugar}g sugar` : ''}
-  Mix ${mixerType} speed until windowpane. Target FDT: ${desiredFDT}°C.`}
-
-COLD FERMENTATION: ${fridgeTemp}°C for ${coldHours.toFixed(1)}h (${(coldHours/24).toFixed(1)} days)
-Ball into ${numPizzas} portions. Oil coating. Uncovered 2h, then cover tightly.
-
-FINAL PROOF: ${proofTemp}°C for ${proofHours.toFixed(1)}h
-Remove from fridge. Jiggle test, poke test, visible bubbles = ready.
-
-TOPPINGS:
-Sauce: ~${Math.round(numPizzas * 70)}g total (${Math.round(70)}g per pizza)
-Cheese: ~${Math.round(numPizzas * 90)}g total (${Math.round(90)}g per pizza)
-
-TIMELINE:
-${generateTimeline().map(t => `  ${t.time} - ${t.action}${t.temperature ? ` (${t.temperature})` : ''}\n    ${t.detail}`).join('\n\n')}
-
-FERMENTATION TEMPERATURES:
-${styleConfig.fermentMethod === 'biga' ? `• Biga: ${bigaTemp}°C for ${bigaHours.toFixed(1)}h\n` : ''}• Bulk: ${bulkTemp}°C for ${bulkHours.toFixed(1)}h
-• Cold: ${fridgeTemp}°C for ${coldHours.toFixed(1)}h
-• Proof: ${proofTemp}°C for ${proofHours.toFixed(1)}h
-
-Generated by Pizza Dough Calculator
-${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}`;
-
-                const blob = new Blob([text], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `pizza-recipe-${pizzaStyle}-${new Date().toISOString().split('T')[0]}.txt`;
-                a.click();
-            };
-
             return (
                 <div className="app-container">
                     <div className="header">
                         <h1>🍕 Pizza Dough Calculator</h1>
-                        <p>Professional recipe builder with temperature calculations, flour blending, and fermentation timelines</p>
+                        <p>Professional recipe builder with temperature calculations</p>
                     </div>
 
-                    <div className="tabs" role="tablist" aria-label="Sections">
+                    <div className="tabs">
                         {[
                             ['setup', 'Setup'],
                             ['flour', 'Flour'],
@@ -1631,802 +1047,363 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                     </div>
 
                     <div className="calculator-grid">
-                        {/* Left Column - Inputs */}
                         <div>
-                            <div style={{display: activeTab === 'setup' ? 'block' : 'none'}}>
-                            <div className="card">
-                                <h2 className="card-title">Pizza Style</h2>
-                                <div className="style-selector">
-                                    {Object.entries(PIZZA_STYLES).map(([key, style]) => (
-                                        <button
-                                            key={key}
-                                            className={`style-button ${pizzaStyle === key ? 'active' : ''}`}
-                                            onClick={() => setPizzaStyle(key)}
-                                        >
-                                            {style.name}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            </div>
-
-                            <div style={{display: activeTab === 'setup' ? 'block' : 'none'}}>
-                            <div className="card" style={{marginTop: '2rem'}}>
-                                <h2 className="card-title">Quantity</h2>
-                                <div className="input-row">
-                                    <div className="input-group">
-                                        <label className="input-label">Number of Pizzas</label>
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            value={numPizzas}
-                                            onChange={(e) => setNumPizzas(parseInt(e.target.value) || 1)}
-                                            min="1"
-                                            max="20"
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="input-label">Dough Ball Weight (grams)</label>
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            value={doughBallWeight}
-                                            onChange={(e) => setDoughBallWeight(parseInt(e.target.value) || 280)}
-                                            min="100"
-                                            max="1000"
-                                            step="10"
-                                        />
-                                        <small style={{fontSize: '0.8rem', color: 'var(--crust)', marginTop: '0.5rem', display: 'block'}}>
-                                            Reference: 10"≈220g | 12"≈280g | 14"≈350g | 16"≈420g | 18"≈520g
-                                        </small>
-                                    </div>
-                                </div>
-
-                            </div>
-                            </div>
-
-                            <div style={{display: (activeTab === 'temps' || activeTab === 'fermentation') ? 'block' : 'none'}}>
-                            <div className="card" style={{marginTop: '2rem'}}>
-                                <h2 className="card-title">Temperatures</h2>
-                                <div className="input-group">
-                                    <label className="input-label">Room Temperature (°C)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={roomTemp}
-                                        onChange={(e) => setRoomTemp(parseFloat(e.target.value) || 20)}
-                                        step="0.5"
-                                    />
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Flour Temperature (°C)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={flourTemp}
-                                        onChange={(e) => setFlourTemp(parseFloat(e.target.value) || 20)}
-                                        step="0.5"
-                                    />
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Fridge Temperature (°C)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={fridgeTemp}
-                                        onChange={(e) => setFridgeTemp(parseFloat(e.target.value) || 4)}
-                                        step="0.1"
-                                    />
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Desired Final Dough Temp (°C)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={desiredFDT}
-                                        onChange={(e) => setDesiredFDT(parseFloat(e.target.value) || 24)}
-                                        step="0.5"
-                                    />
-                                </div>
-
-                            </div>
-                            </div>
-
-                            <div style={{display: activeTab === 'temps' ? 'block' : 'none'}}>
-                            <div className="card" style={{marginTop: '2rem'}}>
-                                <h2 className="card-title">Mixing Method</h2>
-                                <div className="input-group">
-                                    <label className="input-label">Mixer Type (affects friction)</label>
-                                    <select
-                                        className="select-field"
-                                        value={mixerType}
-                                        onChange={(e) => setMixerType(e.target.value)}
-                                    >
-                                        <option value="no-knead">No-Knead (0°C friction)</option>
-                                        <option value="hand">Hand Mixing (6°C friction)</option>
-                                        <option value="low">Stand Mixer - Low (14°C friction)</option>
-                                        <option value="medium">Stand Mixer - Medium (22°C friction)</option>
-                                        <option value="spiral-low">Spiral Mixer - Low (18°C friction)</option>
-                                        <option value="spiral-high">Spiral Mixer - High (22°C friction)</option>
-                                        <option value="medium-high">Stand Mixer - Medium-High (26°C friction)</option>
-                                        <option value="high">Stand Mixer - High (28°C friction)</option>
-                                    </select>
-                                </div>
-                                <div className="info-box" style={{marginTop: '1rem'}}>
-                                    <strong>Water Temperature Needed:</strong> {waterTemp}°C
-                                    {waterTemp < 5 && ' - Use ice water!'}
-                                    {waterTemp > 40 && ' - Too hot! Adjust temps or reduce friction'}
-                                </div>
-                            </div>
-
-                            <div className="card" style={{marginTop: '2rem', display: activeTab === 'fermentation' ? 'block' : 'none'}}>
-                                <h2 className="card-title">Yeast Type</h2>
-                                <div className="input-group">
-                                    <label className="input-label">Select Yeast Type</label>
-                                    <select
-                                        className="select-field"
-                                        value={yeastType}
-                                        onChange={(e) => setYeastType(e.target.value)}
-                                    >
-                                        <option value="instant">Instant Dry Yeast (IDY) - Standard</option>
-                                        <option value="active-dry">Active Dry Yeast (ADY) - 25% more needed</option>
-                                        <option value="fresh">Fresh Yeast (Cake) - 3× more needed</option>
-                                        <option value="lemady">Lemady Yeast - Premium instant</option>
-                                    </select>
-                                </div>
-                                <div className="info-box" style={{marginTop: '1rem', fontSize: '0.875rem', lineHeight: '1.6'}}>
-                                    <strong>📊 Yeast Calculation Breakdown:</strong><br/>
-                                    <span style={{fontSize: '0.85rem'}}>
-                                        1️⃣ Base ({yeastCalc.totalHours.toFixed(1)}h ferment): <strong>{(yeastCalc.baseYeast * 100).toFixed(2)}%</strong><br/>
-                                        2️⃣ × Temp factor ({yeastCalc.avgTemp.toFixed(1)}°C avg): <strong>×{yeastCalc.tempFactor.toFixed(2)}</strong> {avgTemp > 18 ? '↓ warmer' : avgTemp < 12 ? '↑ colder' : ''}<br/>
-                                        3️⃣ × Salt factor ({styleConfig.salt}%): <strong>×{yeastCalc.saltFactor.toFixed(2)}</strong> {saltPercent > 2.5 ? '↑ high salt' : saltPercent < 2 ? '↓ low salt' : ''}<br/>
-                                        4️⃣ × Hydration factor ({hydration}%): <strong>×{yeastCalc.hydrationFactor.toFixed(2)}</strong> {hydration > 75 ? '↓ high' : hydration < 65 ? '↑ low' : ''}<br/>
-                                        = <strong>{(yeastCalc.instantYeastPct * 100).toFixed(3)}% instant yeast</strong><br/>
-                                        5️⃣ × Yeast type ({yeastType}): <strong>×{YEAST_CONVERSIONS[yeastType]}</strong><br/>
-                                        <span style={{color: 'var(--basil)', fontWeight: 'bold', fontSize: '1rem'}}>
-                                            = {(yeastPercentage * 100).toFixed(3)}% {yeastType} yeast = {totalYeast}g total
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="card" style={{marginTop: '2rem', display: activeTab === 'fermentation' ? 'block' : 'none'}}>
-                                <h2 className="card-title">Fermentation Timeline</h2>
-                                
-                                <div className="input-group">
-                                    <label className="input-label">Timeline Mode</label>
-                                    <div className="style-selector" style={{gridTemplateColumns: '1fr 1fr', marginBottom: '1rem'}}>
-                                        <button
-                                            className={`style-button ${timelineMode === 'forward' ? 'active' : ''}`}
-                                            onClick={() => setTimelineMode('forward')}
-                                        >
-                                            Start Now
-                                        </button>
-                                        <button
-                                            className={`style-button ${timelineMode === 'reverse' ? 'active' : ''}`}
-                                            onClick={() => setTimelineMode('reverse')}
-                                        >
-                                            Plan Backwards
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {timelineMode === 'reverse' && (
-                                    <div className="input-group">
-                                        <label className="input-label">When do you want to bake?</label>
-                                        <input
-                                            type="datetime-local"
-                                            className="input-field"
-                                            value={bakeDateTime}
-                                            onChange={(e) => setBakeDateTime(e.target.value)}
-                                        />
-                                    </div>
-                                )}
-
-                                <div className="info-box" style={{marginTop: '1rem', marginBottom: '1.5rem'}}>
-                                    <strong>How this works:</strong> {timelineMode === 'forward' 
-                                        ? 'Timeline starts from now and shows when to bake.' 
-                                        : 'Enter your bake time above, and the calculator will tell you when to start each step.'}
-                                </div>
-
-                                {styleConfig.fermentMethod === 'biga' && (
-                                    <>
-                                        <div className="input-row">
-                                            <div className="input-group">
-                                                <label className="input-label">Biga Temperature (°C)</label>
-                                                <input
-                                                    type="number"
-                                                    className="input-field"
-                                                    value={bigaTemp}
-                                                    onChange={(e) => setBigaTemp(parseFloat(e.target.value) || 13)}
-                                                    step="0.5"
-                                                />
-                                            </div>
-                                            <div className="input-group">
-                                                <label className="input-label">Calculated Duration</label>
-                                                <input
-                                                    type="text"
-                                                    className="input-field"
-                                                    value={`${getBigaHours().toFixed(1)} hours`}
-                                                    disabled
-                                                    style={{background: 'var(--wheat)', color: 'var(--crust)'}}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="input-group">
-                                            <label className="input-label">Override Biga Hours (optional)</label>
-                                            <input
-                                                type="number"
-                                                className="input-field"
-                                                placeholder={`Auto: ${getBigaHours().toFixed(1)} hours`}
-                                                value={customBigaHours || ''}
-                                                onChange={(e) => setCustomBigaHours(e.target.value ? parseFloat(e.target.value) : null)}
-                                                step="0.5"
-                                            />
-                                        </div>
-                                        <div className="input-row" style={{marginTop: '1.25rem'}}>
-                                            <div className="input-group">
-                                                <label className="input-label">Biga % of total flour</label>
-                                                <input
-                                                    type="number"
-                                                    className="input-field"
-                                                    value={customBigaPercent ?? ''}
-                                                    placeholder={`Default: ${styleConfig.bigaPercentage}%`}
-                                                    onChange={(e) => setCustomBigaPercent(e.target.value ? parseFloat(e.target.value) : null)}
-                                                    min="10"
-                                                    max="90"
-                                                    step="1"
-                                                />
-                                            </div>
-                                            <div className="input-group">
-                                                <label className="input-label">Biga hydration %</label>
-                                                <input
-                                                    type="number"
-                                                    className="input-field"
-                                                    value={customBigaHydration ?? ''}
-                                                    placeholder={`Default: ${styleConfig.bigaHydration}%`}
-                                                    onChange={(e) => setCustomBigaHydration(e.target.value ? parseFloat(e.target.value) : null)}
-                                                    min="45"
-                                                    max="80"
-                                                    step="1"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="input-row">
-                                            <div className="input-group">
-                                                <label className="input-label">Biga yeast % (of biga flour)</label>
-                                                <input
-                                                    type="number"
-                                                    className="input-field"
-                                                    value={customBigaYeastPercent}
-                                                    onChange={(e) => setCustomBigaYeastPercent(parseFloat(e.target.value) || 0)}
-                                                    min="0"
-                                                    max="2"
-                                                    step="0.05"
-                                                />
-                                            </div>
-                                            <div className="input-group">
-                                                <label className="input-label">Effective biga build</label>
-                                                <input
-                                                    type="text"
-                                                    className="input-field"
-                                                    value={`${bigaPercent}% @ ${bigaHydration}% • yeast ${bigaYeastPct}%`}
-                                                    disabled
-                                                    style={{background: 'var(--wheat)', color: 'var(--crust)'}}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {(ingredients.meta?.finalWaterNegative || ingredients.meta?.totalYeastLessThanBiga) && (
-                                            <div className="warning-box" style={{marginTop: '1rem'}}>
-                                                {ingredients.meta?.finalWaterNegative && (
-                                                    <div>⚠️ Your biga water exceeds total water. Reduce biga hydration or biga % (or raise overall hydration).</div>
-                                                )}
-                                                {ingredients.meta?.totalYeastLessThanBiga && (
-                                                    <div>⚠️ Total yeast is lower than your biga yeast. Final dough yeast is clamped to 0g — consider lowering biga yeast % or shortening fermentation.</div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-
-                                <div className="input-row">
-                                    <div className="input-group">
-                                        <label className="input-label">Bulk Ferment Temp (°C)</label>
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            value={bulkTemp}
-                                            onChange={(e) => setBulkTemp(parseFloat(e.target.value) || 22)}
-                                            step="0.5"
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="input-label">Calculated Duration</label>
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            value={`${getBulkHours().toFixed(1)} hours`}
-                                            disabled
-                                            style={{background: 'var(--wheat)', color: 'var(--crust)'}}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Override Bulk Hours (optional)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        placeholder={`Auto: ${getBulkHours().toFixed(1)} hours`}
-                                        value={customBulkHours || ''}
-                                        onChange={(e) => setCustomBulkHours(e.target.value ? parseFloat(e.target.value) : null)}
-                                        step="0.1"
-                                    />
-                                </div>
-
-                                <div className="input-row">
-                                    <div className="input-group">
-                                        <label className="input-label">Cold Ferment (uses fridge temp)</label>
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            value={`${fridgeTemp}°C`}
-                                            disabled
-                                            style={{background: 'var(--wheat)', color: 'var(--crust)'}}
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="input-label">Calculated Duration</label>
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            value={`${getColdFermentHours().toFixed(1)} hours (${(getColdFermentHours()/24).toFixed(1)} days)`}
-                                            disabled
-                                            style={{background: 'var(--wheat)', color: 'var(--crust)'}}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Override Cold Ferment Hours (optional)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        placeholder={`Auto: ${getColdFermentHours().toFixed(1)} hours`}
-                                        value={customColdHours || ''}
-                                        onChange={(e) => setCustomColdHours(e.target.value ? parseFloat(e.target.value) : null)}
-                                        step="1"
-                                    />
-                                </div>
-
-                                <div className="input-row">
-                                    <div className="input-group">
-                                        <label className="input-label">Final Proof Temp (°C)</label>
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            value={proofTemp}
-                                            onChange={(e) => setProofTemp(parseFloat(e.target.value) || 18)}
-                                            step="0.5"
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="input-label">Calculated Duration</label>
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            value={`${getProofHours().toFixed(1)} hours`}
-                                            disabled
-                                            style={{background: 'var(--wheat)', color: 'var(--crust)'}}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Override Proof Hours (optional)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        placeholder={`Auto: ${getProofHours().toFixed(1)} hours`}
-                                        value={customProofHours || ''}
-                                        onChange={(e) => setCustomProofHours(e.target.value ? parseFloat(e.target.value) : null)}
-                                        step="0.1"
-                                    />
-                                </div>
-
-                                <div className="info-box" style={{marginTop: '1.5rem'}}>
-                                    <strong>Temperature Guide:</strong><br/>
-                                    • Biga: 12-15°C (wine fridge or cool room)<br/>
-                                    • Bulk: 20-22°C (room temp)<br/>
-                                    • Cold: 3-4°C (fridge)<br/>
-                                    • Final Proof: 17-19°C (cool room, NOT warm kitchen)
-                                </div>
-                            </div>
-
-                            <div className="card" style={{marginTop: '2rem', display: (activeTab === 'setup' || activeTab === 'flour') ? 'block' : 'none'}}>
-                                <h2 className="card-title">Advanced Options</h2>
-                                <div className="input-group">
-                                    <label className="input-label">Custom Hydration % (optional)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        placeholder={`Default: ${styleConfig.hydration}%`}
-                                        value={customHydration || ''}
-                                        onChange={(e) => setCustomHydration(e.target.value ? parseFloat(e.target.value) : null)}
-                                        step="0.5"
-                                    />
-                                </div>
-
-                                <div className="hydration-indicator">
-                                    <div style={{fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem'}}>
-                                        Hydration Level: {hydration}%
-                                    </div>
-                                    <div className="hydration-bar">
-                                        <div className="hydration-fill" style={{width: `${Math.min(hydration, 100)}%`}}>
-                                            {hydration}%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Right Column - Results */}
-                        <div>
-                            {(activeTab === 'recipe' || activeTab === 'flour') && (
-                                <div className="card" style={{marginBottom: '2rem'}}>
-                                    <h2 className="card-title">Dough Health</h2>
-                                    <div className="health-box">
-                                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', gap:'1rem', flexWrap:'wrap'}}>
-                                            <div>
-                                                <div className={`health-badge ${doughHealth.cls}`}>
-                                                    🩺 {doughHealth.level} (score {doughHealth.score})
-                                                </div>
-                                                <div style={{marginTop:'0.6rem', fontSize:'0.9rem', lineHeight:'1.55', color:'var(--crust)'}}>
-                                                    Warm: <strong>{doughHealth.warmHours.toFixed(1)}h</strong> • Cold: <strong>{doughHealth.coldHours.toFixed(1)}h</strong> • Total: <strong>{totalFermentHours.toFixed(1)}h</strong>
-                                                </div>
-                                            </div>
-                                            <button className="button button-secondary" onClick={() => switchTab('fermentation')} type="button">
-                                                Adjust Fermentation
-                                            </button>
-                                        </div>
-                                        {doughHealth.notes?.length > 0 && (
-                                            <div style={{marginTop:'0.85rem'}}>
-                                                <strong style={{color:'var(--char)'}}>Watch points:</strong>
-                                                <ul style={{margin:'0.5rem 0 0', paddingLeft:'1.1rem'}}>
-                                                    {doughHealth.notes.slice(0, 5).map((n, i) => (<li key={i} style={{margin:'0.25rem 0'}}>{n}</li>))}
-                                                </ul>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                            {(activeTab === 'recipe' || activeTab === 'flour') && warnings.length > 0 && (
-                                <div className="card" style={{marginBottom: '2rem'}}>
-                                    <h2 className="card-title">Warnings</h2>
-                                    {warnings.map((warning, i) => (
-                                        <div key={i} className="warning-box">{warning}</div>
-                                    ))}
-                                </div>
-                            )}
-
-                            <div className="card" style={{display: (activeTab === 'recipe' || activeTab === 'flour') ? 'block' : 'none'}}>
-                                <h2 className="card-title">Recipe</h2>
-                                <div className="toggle-switch">
-                                    <span>Grams</span>
-                                    <label className="switch">
-                                        <input
-                                            type="checkbox"
-                                            checked={showBakersPercentage}
-                                            onChange={(e) => setShowBakersPercentage(e.target.checked)}
-                                        />
-                                        <span className="slider"></span>
-                                    </label>
-                                    <span>Baker's %</span>
-                                </div>
-
-                                <div className="results-section">
-                                    <div className="results-title">Flour Blend</div>
-                                    {activeTab === 'flour' ? (
-                                        <>
-                                            <div className="input-group" style={{marginTop:'1rem'}}>
-                                                <label className="input-label">Dough intent</label>
-                                                <div className="style-selector" style={{gridTemplateColumns:'1fr 1fr 1fr', marginBottom:'0.75rem'}}>
-                                                    <button className={`style-button ${doughPriority === 'balanced' ? 'active' : ''}`} onClick={() => setDoughPriority('balanced')} type="button">Balanced</button>
-                                                    <button className={`style-button ${doughPriority === 'extensible' ? 'active' : ''}`} onClick={() => setDoughPriority('extensible')} type="button">Max extensibility</button>
-                                                    <button className={`style-button ${doughPriority === 'strength' ? 'active' : ''}`} onClick={() => setDoughPriority('strength')} type="button">Max strength</button>
-                                                </div>
-                                                <div className="info-box" style={{marginTop:'0.5rem', fontSize:'0.85rem'}}>
-                                                    This nudges the auto-blend toward easier stretching (extensible) or more safety for high hydration/long ferments (strength).
-                                                </div>
-                                            </div>
-                                            <div className="input-group" style={{marginTop:'1rem'}}>
-                                        <label className="input-label">Blend Mode</label>
-                                        <div className="style-selector" style={{gridTemplateColumns:'1fr 1fr', marginBottom:'0.75rem'}}>
-                                            <button
-                                                className={`style-button ${autoFlourBlend ? 'active' : ''}`}
-                                                onClick={() => setAutoFlourBlend(true)}
-                                            >
-                                                Auto (recommended)
-                                            </button>
-                                            <button
-                                                className={`style-button ${!autoFlourBlend ? 'active' : ''}`}
-                                                onClick={() => setAutoFlourBlend(false)}
-                                            >
-                                                Manual (style preset)
-                                            </button>
-                                        </div>
-                                        {autoFlourBlend && flourBlendWhy && (
-                                            <div className="info-box" style={{marginTop:'0.5rem', fontSize:'0.85rem'}}>
-                                                <strong>Why this blend:</strong> {flourBlendWhy}
-                                            </div>
-                                        )}
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="info-box" style={{marginTop:'1rem'}}>
-                                            <strong>Blend summary:</strong> {flourBlend.map(f => `${f.flourData.name} ${f.percentage}%`).join(' • ')}
-                                            <div style={{marginTop:'0.75rem'}}>
-                                                <button className="button button-secondary" onClick={() => switchTab('flour')} type="button">Edit Flour Blend</button>
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div className="flour-blend">
-                                        {flourBlend.map((flour, i) => (
-                                            <div key={i} className="flour-item">
-                                                <div>
-                                                    <div className="ingredient-name">{flour.flourData.name}</div>
-                                                    <div style={{fontSize: '0.75rem', color: 'var(--crust)', marginTop: '0.25rem'}}>
-                                                        {flour.flourData.protein}% protein, W{flour.flourData.w}
-                                                    </div>
-                                                </div>
-                                                <div className="ingredient-amount">
-                                                    {showBakersPercentage ? `${flour.percentage}%` : `${flour.grams}g`}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {styleConfig.fermentMethod === 'biga' ? (
-                                    <>
-                                        <div className="results-section">
-                                            <div className="results-title">Biga (Pre-ferment)</div>
-                                            <div className="ingredient-list">
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Flour</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${bigaPercent}%` : `${ingredients.biga.flour}g`}
-                                                    </span>
-                                                </div>
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Water</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${bigaHydration}%` : `${ingredients.biga.water}g`}
-                                                    </span>
-                                                </div>
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Yeast</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${bigaYeastPct.toFixed(2)}%` : `${ingredients.biga.yeast}g`}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="results-section">
-                                            <div className="results-title">Final Dough</div>
-                                            <div className="ingredient-list">
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">All of the biga</span>
-                                                    <span className="ingredient-amount">—</span>
-                                                </div>
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Flour</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${(100 - bigaPercent).toFixed(0)}%` : `${ingredients.final.flour}g`}
-                                                    </span>
-                                                </div>
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Water ({waterTemp}°C)</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${(hydration - bigaHydration * bigaPercent / 100).toFixed(1)}%` : `${ingredients.final.water}g`}
-                                                    </span>
-                                                </div>
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Salt</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${styleConfig.salt}%` : `${ingredients.final.salt}g`}
-                                                    </span>
-                                                </div>
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Yeast</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${(yeastPercentage - 0.3).toFixed(2)}%` : `${ingredients.final.yeast}g`}
-                                                    </span>
-                                                </div>
-                                                {ingredients.final.diastatic && (
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Diastatic Malt</span>
-                                                        <span className="ingredient-amount">
-                                                            {showBakersPercentage ? `${styleConfig.diastatic}%` : `${ingredients.final.diastatic}g`}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                {ingredients.final.oil && (
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Olive Oil</span>
-                                                        <span className="ingredient-amount">
-                                                            {showBakersPercentage ? `${styleConfig.oil}%` : `${ingredients.final.oil}g`}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                {ingredients.final.sugar && (
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Sugar</span>
-                                                        <span className="ingredient-amount">
-                                                            {showBakersPercentage ? `${styleConfig.sugar}%` : `${ingredients.final.sugar}g`}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="results-section">
-                                        <div className="results-title">Ingredients</div>
-                                        <div className="ingredient-list">
-                                            <div className="ingredient-item">
-                                                <span className="ingredient-name">Total Flour</span>
-                                                <span className="ingredient-amount">
-                                                    {showBakersPercentage ? '100%' : `${ingredients.flour}g`}
-                                                </span>
-                                            </div>
-                                            <div className="ingredient-item">
-                                                <span className="ingredient-name">Water ({waterTemp}°C)</span>
-                                                <span className="ingredient-amount">
-                                                    {showBakersPercentage ? `${hydration}%` : `${ingredients.water}g`}
-                                                </span>
-                                            </div>
-                                            <div className="ingredient-item">
-                                                <span className="ingredient-name">Salt</span>
-                                                <span className="ingredient-amount">
-                                                    {showBakersPercentage ? `${styleConfig.salt}%` : `${ingredients.salt}g`}
-                                                </span>
-                                            </div>
-                                            <div className="ingredient-item">
-                                                <span className="ingredient-name">Yeast</span>
-                                                <span className="ingredient-amount">
-                                                    {showBakersPercentage ? `${yeastPercentage}%` : `${ingredients.yeast}g`}
-                                                </span>
-                                            </div>
-                                            {ingredients.diastatic && (
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Diastatic Malt</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${styleConfig.diastatic}%` : `${ingredients.diastatic}g`}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            {ingredients.oil && (
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Olive Oil</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${styleConfig.oil}%` : `${ingredients.oil}g`}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            {ingredients.sugar && (
-                                                <div className="ingredient-item">
-                                                    <span className="ingredient-name">Sugar</span>
-                                                    <span className="ingredient-amount">
-                                                        {showBakersPercentage ? `${styleConfig.sugar}%` : `${ingredients.sugar}g`}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="info-box">
-                                    <strong>Sauce:</strong> {Math.round(numPizzas * 70)}g total ({Math.round(70)}g per pizza)<br/>
-                                    <strong>Cheese:</strong> {Math.round(numPizzas * 90)}g total ({Math.round(90)}g per pizza)
-                                </div>
-                            </div>
-
-                            <div className="card" style={{marginTop: '2rem', display: activeTab === 'timeline' ? 'block' : 'none'}}>
-                                <h2 className="card-title">Timeline</h2>
-                                {timelineMode === 'reverse' && !bakeDateTime && (
-                                    <div className="warning-box">
-                                        ⚠️ Please enter your desired bake date & time above to generate the timeline
-                                    </div>
-                                )}
-                                {(timelineMode === 'forward' || bakeDateTime) && (
-                                    <div className="timeline-section">
-                                        {generateTimeline().map((item, i) => (
-                                            <div key={i} className={`timeline-item ${item.highlight ? 'highlight' : ''}`}>
-                                                <div className="timeline-time">{item.time}</div>
-                                                <div style={{flex: 1}}>
-                                                    <div className="timeline-text"><strong>{item.action}</strong></div>
-                                                    {item.temperature && (
-                                                        <div style={{fontSize: '0.85rem', color: 'var(--tomato)', fontWeight: '600', marginTop: '0.25rem'}}>
-                                                            🌡️ {item.temperature}
-                                                        </div>
-                                                    )}
-                                                    <div style={{marginTop:'0.5rem', color: 'var(--crust)', fontSize:'0.9rem', lineHeight:'1.5'}}>
-                                                        {(() => {
-                                                            const lines = Array.isArray(item.detail)
-                                                                ? item.detail
-                                                                : String(item.detail || '').split(/\.(?:\s+|$)/).map(s => s.trim()).filter(Boolean);
-                                                            return (
-                                                                <ul style={{margin:0, paddingLeft:'1.1rem'}}>
-                                                                    {lines.map((ln, idx) => (<li key={idx} style={{margin:'0.2rem 0'}}>{ln}</li>))}
-                                                                </ul>
-                                                            );
-                                                        })()}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                
-                                <div className="info-box" style={{marginTop: '1.5rem'}}>
-                                    <strong>Total Time:</strong> {(() => {
-                                        const total = (styleConfig.fermentMethod === 'biga' ? getBigaHours() : 0) + getBulkHours() + getColdFermentHours() + getProofHours();
-                                        return `${total.toFixed(1)} hours (${(total/24).toFixed(1)} days)`;
-                                    })()}<br/>
-                                    <strong>Active Work:</strong> ~30-45 minutes total (mixing, balling, stretching)
-                                </div>
-                            </div>
-
-                            <div className="card" style={{marginTop: '2rem', display: activeTab === 'save' ? 'block' : 'none'}}>
-                                <h2 className="card-title">Save Recipe</h2>
-                                <div className="recipe-name-input">
-                                    <input
-                                        type="text"
-                                        className="input-field"
-                                        placeholder="Enter recipe name..."
-                                        value={recipeName}
-                                        onChange={(e) => setRecipeName(e.target.value)}
-                                    />
-                                </div>
-                                <div className="button-group">
-                                    <button className="button button-primary" onClick={saveRecipe}>
-                                        Save Recipe
-                                    </button>
-                                    <button className="button button-secondary" onClick={exportRecipe}>
-                                        Export as Text
-                                    </button>
-                                </div>
-
-                                {savedRecipes.length > 0 && (
-                                    <div style={{marginTop: '2rem'}}>
-                                        <div style={{fontSize: '0.875rem', fontWeight: '600', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--crust)'}}>
-                                            Saved Recipes
-                                        </div>
-                                        <div className="saved-recipes">
-                                            {savedRecipes.map((recipe, i) => (
-                                                <div key={i} className="saved-recipe-item" onClick={() => loadRecipe(recipe)}>
-                                                    <div>
-                                                        <div style={{fontWeight: '500'}}>{recipe.name}</div>
-                                                        <div style={{fontSize: '0.75rem', color: 'var(--crust)', marginTop: '0.25rem'}}>
-                                                            {PIZZA_STYLES[recipe.pizzaStyle].name} - {recipe.numPizzas}× {recipe.doughBallWeight || (recipe.pizzaSize && `${recipe.pizzaSize}" pizzas`) || '280'}g
-                                                        </div>
-                                                    </div>
-                                                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteRecipe(i); }}>
-                                                        ×
-                                                    </button>
-                                                </div>
+                            {/* Setup Tab */}
+                            {activeTab === 'setup' && (
+                                <>
+                                    <div className="card">
+                                        <h2 className="card-title">Pizza Style</h2>
+                                        <div className="style-selector">
+                                            {Object.entries(PIZZA_STYLES).map(([key, style]) => (
+                                                <button
+                                                    key={key}
+                                                    className={`style-button ${pizzaStyle === key ? 'active' : ''}`}
+                                                    onClick={() => setPizzaStyle(key)}
+                                                >
+                                                    {style.name}
+                                                </button>
                                             ))}
                                         </div>
                                     </div>
-                                )}
-                            </div>
+
+                                    <div className="card" style={{marginTop: '2rem'}}>
+                                        <h2 className="card-title">Quantity</h2>
+                                        <div className="input-row">
+                                            <div className="input-group">
+                                                <label className="input-label">Number of Pizzas</label>
+                                                <input
+                                                    type="number"
+                                                    className="input-field"
+                                                    value={numPizzas}
+                                                    onChange={(e) => setNumPizzas(parseInt(e.target.value) || 1)}
+                                                    min="1"
+                                                    max="20"
+                                                />
+                                            </div>
+                                            <div className="input-group">
+                                                <label className="input-label">Dough Ball Weight (grams)</label>
+                                                <input
+                                                    type="number"
+                                                    className="input-field"
+                                                    value={doughBallWeight}
+                                                    onChange={(e) => setDoughBallWeight(parseInt(e.target.value) || 280)}
+                                                    min="100"
+                                                    max="1000"
+                                                    step="10"
+                                                />
+                                                <small style={{fontSize: '0.8rem', color: 'var(--crust)', marginTop: '0.5rem', display: 'block'}}>
+                                                    Reference: 10"≈220g | 12"≈280g | 14"≈350g | 16"≈420g | 18"≈520g
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="card" style={{marginTop: '2rem'}}>
+                                        <h2 className="card-title">Hydration</h2>
+                                        <div className="input-group">
+                                            <label className="input-label">Custom Hydration % (optional)</label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                placeholder={`Default: ${styleConfig.hydration}%`}
+                                                value={customHydration || ''}
+                                                onChange={(e) => setCustomHydration(e.target.value ? parseFloat(e.target.value) : null)}
+                                                step="0.5"
+                                            />
+                                        </div>
+
+                                        <div className="hydration-indicator">
+                                            <div style={{fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem'}}>
+                                                Hydration Level: {hydration}%
+                                            </div>
+                                            <div className="hydration-bar">
+                                                <div className="hydration-fill" style={{width: `${Math.min(hydration, 100)}%`}}>
+                                                    {hydration}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Fermentation Tab */}
+                            {activeTab === 'fermentation' && (
+                                <>
+                                    <div className="card">
+                                        <h2 className="card-title">Yeast Type</h2>
+                                        <div className="input-group">
+                                            <label className="input-label">Select Yeast Type</label>
+                                            <select
+                                                className="select-field"
+                                                value={yeastType}
+                                                onChange={(e) => setYeastType(e.target.value)}
+                                            >
+                                                <option value="instant">Instant Dry Yeast (IDY) - Standard</option>
+                                                <option value="active-dry">Active Dry Yeast (ADY) - 25% more needed</option>
+                                                <option value="fresh">Fresh Yeast (Cake) - 3× more needed</option>
+                                                <option value="lemady">Lemady Yeast - Premium instant</option>
+                                            </select>
+                                        </div>
+                                        <div className="info-box" style={{marginTop: '1rem'}}>
+                                            <strong>📊 Yeast Calculation:</strong><br/>
+                                            Base ({yeastCalc.totalHours.toFixed(1)}h): {(yeastCalc.baseYeast * 100).toFixed(2)}%<br/>
+                                            Temp factor: ×{yeastCalc.tempFactor.toFixed(2)}<br/>
+                                            = <strong>{(yeastPercentage * 100).toFixed(3)}% {yeastType} = {totalYeast}g</strong>
+                                        </div>
+                                    </div>
+
+                                    {styleConfig.fermentMethod === 'biga' && (
+                                        <div className="card" style={{marginTop: '2rem'}}>
+                                            <h2 className="card-title">Biga Settings</h2>
+                                            <div className="input-row">
+                                                <div className="input-group">
+                                                    <label className="input-label">Biga % of flour</label>
+                                                    <input
+                                                        type="number"
+                                                        className="input-field"
+                                                        value={customBigaPercent ?? ''}
+                                                        placeholder={`Default: ${styleConfig.bigaPercentage}%`}
+                                                        onChange={(e) => setCustomBigaPercent(e.target.value ? parseFloat(e.target.value) : null)}
+                                                        min="10"
+                                                        max="90"
+                                                    />
+                                                </div>
+                                                <div className="input-group">
+                                                    <label className="input-label">Biga hydration %</label>
+                                                    <input
+                                                        type="number"
+                                                        className="input-field"
+                                                        value={customBigaHydration ?? ''}
+                                                        placeholder={`Default: ${styleConfig.bigaHydration}%`}
+                                                        onChange={(e) => setCustomBigaHydration(e.target.value ? parseFloat(e.target.value) : null)}
+                                                        min="45"
+                                                        max="80"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+
+                            {/* Temperatures Tab */}
+                            {activeTab === 'temps' && (
+                                <>
+                                    <div className="card">
+                                        <h2 className="card-title">Temperatures</h2>
+                                        <div className="input-group">
+                                            <label className="input-label">Room Temperature (°C)</label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                value={roomTemp}
+                                                onChange={(e) => setRoomTemp(parseFloat(e.target.value) || 20)}
+                                                step="0.5"
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label className="input-label">Flour Temperature (°C)</label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                value={flourTemp}
+                                                onChange={(e) => setFlourTemp(parseFloat(e.target.value) || 20)}
+                                                step="0.5"
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label className="input-label">Desired Final Dough Temp (°C)</label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                value={desiredFDT}
+                                                onChange={(e) => setDesiredFDT(parseFloat(e.target.value) || 24)}
+                                                step="0.5"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="card" style={{marginTop: '2rem'}}>
+                                        <h2 className="card-title">Mixing Method</h2>
+                                        <div className="input-group">
+                                            <label className="input-label">Mixer Type</label>
+                                            <select
+                                                className="select-field"
+                                                value={mixerType}
+                                                onChange={(e) => setMixerType(e.target.value)}
+                                            >
+                                                <option value="no-knead">No-Knead (0°C friction)</option>
+                                                <option value="hand">Hand Mixing (6°C)</option>
+                                                <option value="low">Stand Mixer - Low (14°C)</option>
+                                                <option value="medium">Stand Mixer - Medium (22°C)</option>
+                                                <option value="spiral-low">Spiral Mixer - Low (18°C)</option>
+                                                <option value="spiral-high">Spiral Mixer - High (22°C)</option>
+                                                <option value="medium-high">Stand Mixer - Medium-High (26°C)</option>
+                                                <option value="high">Stand Mixer - High (28°C)</option>
+                                            </select>
+                                        </div>
+                                        <div className="info-box">
+                                            <strong>Water Temperature Needed:</strong> {waterTemp}°C
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Right Column */}
+                        <div>
+                            {/* Recipe Tab */}
+                            {activeTab === 'recipe' && (
+                                <>
+                                    {warnings.length > 0 && (
+                                        <div className="card" style={{marginBottom: '2rem'}}>
+                                            <h2 className="card-title">Warnings</h2>
+                                            {warnings.map((warning, i) => (
+                                                <div key={i} className="warning-box">{warning}</div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className="card">
+                                        <h2 className="card-title">Recipe</h2>
+                                        <div className="toggle-switch">
+                                            <span>Grams</span>
+                                            <label className="switch">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={showBakersPercentage}
+                                                    onChange={(e) => setShowBakersPercentage(e.target.checked)}
+                                                />
+                                                <span className="slider"></span>
+                                            </label>
+                                            <span>Baker's %</span>
+                                        </div>
+
+                                        <div className="results-section">
+                                            <div className="results-title">Flour Blend</div>
+                                            <div className="flour-blend">
+                                                {flourBlend.map((flour, i) => (
+                                                    <div key={i} className="flour-item">
+                                                        <div>
+                                                            <div className="ingredient-name">{flour.flourData.name}</div>
+                                                            <div style={{fontSize: '0.75rem', color: 'var(--crust)', marginTop: '0.25rem'}}>
+                                                                {flour.flourData.protein}% protein, W{flour.flourData.w}
+                                                            </div>
+                                                        </div>
+                                                        <div className="ingredient-amount">
+                                                            {showBakersPercentage ? `${flour.percentage}%` : `${flour.grams}g`}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {styleConfig.fermentMethod === 'biga' ? (
+                                            <>
+                                                <div className="results-section">
+                                                    <div className="results-title">Biga</div>
+                                                    <div className="ingredient-list">
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Flour</span>
+                                                            <span className="ingredient-amount">{ingredients.biga.flour}g</span>
+                                                        </div>
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Water</span>
+                                                            <span className="ingredient-amount">{ingredients.biga.water}g</span>
+                                                        </div>
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Yeast</span>
+                                                            <span className="ingredient-amount">{ingredients.biga.yeast}g</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="results-section">
+                                                    <div className="results-title">Final Dough</div>
+                                                    <div className="ingredient-list">
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Flour</span>
+                                                            <span className="ingredient-amount">{ingredients.final.flour}g</span>
+                                                        </div>
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Water ({waterTemp}°C)</span>
+                                                            <span className="ingredient-amount">{ingredients.final.water}g</span>
+                                                        </div>
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Salt</span>
+                                                            <span className="ingredient-amount">{ingredients.final.salt}g</span>
+                                                        </div>
+                                                        <div className="ingredient-item">
+                                                            <span className="ingredient-name">Yeast</span>
+                                                            <span className="ingredient-amount">{ingredients.final.yeast}g</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="results-section">
+                                                <div className="results-title">Ingredients</div>
+                                                <div className="ingredient-list">
+                                                    <div className="ingredient-item">
+                                                        <span className="ingredient-name">Flour</span>
+                                                        <span className="ingredient-amount">{ingredients.flour}g</span>
+                                                    </div>
+                                                    <div className="ingredient-item">
+                                                        <span className="ingredient-name">Water ({waterTemp}°C)</span>
+                                                        <span className="ingredient-amount">{ingredients.water}g</span>
+                                                    </div>
+                                                    <div className="ingredient-item">
+                                                        <span className="ingredient-name">Salt</span>
+                                                        <span className="ingredient-amount">{ingredients.salt}g</span>
+                                                    </div>
+                                                    <div className="ingredient-item">
+                                                        <span className="ingredient-name">Yeast</span>
+                                                        <span className="ingredient-amount">{ingredients.yeast}g</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Save Tab */}
+                            {activeTab === 'save' && (
+                                <div className="card">
+                                    <h2 className="card-title">Save Recipe</h2>
+                                    <div className="recipe-name-input">
+                                        <input
+                                            type="text"
+                                            className="input-field"
+                                            placeholder="Enter recipe name..."
+                                            value={recipeName}
+                                            onChange={(e) => setRecipeName(e.target.value)}
+                                        />
+                                    </div>
+                                    <button className="button button-primary" onClick={saveRecipe} style={{width: '100%'}}>
+                                        Save Recipe
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Placeholder for other tabs */}
+                            {(activeTab === 'setup' || activeTab === 'fermentation' || activeTab === 'temps') && (
+                                <div className="card">
+                                    <h2 className="card-title">Quick Summary</h2>
+                                    <div className="info-box">
+                                        <strong>{numPizzas} pizzas × {doughBallWeight}g</strong><br/>
+                                        {styleConfig.name} • {hydration}% hydration<br/>
+                                        Total flour: {totalFlour}g<br/>
+                                        Water temp: {waterTemp}°C
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             );
         }
-        // Mount (React 17)
+
         const mountApp = () => {
             const container = document.getElementById('root');
             if (!container) return;
@@ -2447,71 +1424,13 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
                 pre.style.background = 'rgba(255,255,255,0.8)';
                 pre.style.border = '1px solid rgba(0,0,0,0.1)';
                 pre.style.borderRadius = '12px';
-                pre.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
                 pre.textContent = 'App failed to start\n\n' + (err && err.stack ? err.stack : String(err));
                 container.appendChild(pre);
             }
         };
 
         setTimeout(mountApp, 0);
-</script>
-<script>
-(function(){
-  function show(msg){
-    var el=document.getElementById('root');
-    if(el){
-      el.innerHTML='';
-      var pre=document.createElement('pre');
-      pre.style.whiteSpace='pre-wrap';
-      pre.style.padding='16px';
-      pre.style.margin='16px auto';
-      pre.style.maxWidth='900px';
-      pre.style.background='rgba(255,255,255,0.9)';
-      pre.style.border='1px solid rgba(0,0,0,0.12)';
-      pre.style.borderRadius='12px';
-      pre.style.fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-      pre.textContent=msg;
-      el.appendChild(pre);
-    }
-  }
-  function compileAndRun(){
-    try{
-      if(!window.Babel || !window.Babel.transform){
-        show('Babel failed to load.');
-        return;
-      }
-      var node=document.getElementById('app-jsx');
-      if(!node){
-        show('Missing app source block.');
-        return;
-      }
-      var src=node.textContent || node.innerText || '';
-      var out=window.Babel.transform(src, {
-        presets: ['env','react'],
-        plugins: ['proposal-optional-chaining','proposal-nullish-coalescing-operator']
-      }).code;
-      (new Function(out))();
-    }catch(e){
-      show('App failed to start\n\n' + (e && e.stack ? e.stack : String(e)));
-    }
-  }
-  function start(){
-    if(typeof window.__gianspies_loadDeps !== 'function'){
-      // Should never happen, but keep it non-silent.
-      compileAndRun();
-      return;
-    }
-    window.__gianspies_loadDeps(function(err){
-      if(err) return; // error already displayed
-      compileAndRun();
-    });
-  }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded', start);
-  }else{
-    start();
-  }
-})();
-</script>
+
+    </script>
 </body>
 </html>
