@@ -3,75 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Dough Calculator - Professional Recipe Builder</title>
-    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
-    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
-    <script>
-    (function(){
-      function show(msg){
-        var root = document.getElementById('root');
-        if(!root) { return; }
-        root.innerHTML = '';
-        var pre = document.createElement('pre');
-        pre.style.whiteSpace = 'pre-wrap';
-        pre.style.padding = '16px';
-        pre.style.margin = '16px auto';
-        pre.style.maxWidth = '900px';
-        pre.style.background = 'rgba(255,255,255,0.85)';
-        pre.style.border = '1px solid rgba(0,0,0,0.12)';
-        pre.style.borderRadius = '12px';
-        pre.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-        pre.textContent = msg;
-        root.appendChild(pre);
-      }
-
-      function ready(fn){
-        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
-        else fn();
-      }
-
-      ready(function(){
-        var err = null;
-        if(!window.React) err = 'React failed to load. Check network / CDN availability.';
-        else if(!window.ReactDOM) err = 'ReactDOM failed to load. Check network / CDN availability.';
-        else if(!window.Babel) err = 'Babel failed to load. Check network / CDN availability.';
-        if(err){ show(err); return; }
-
-        try {
-          if(!window.__BABEL_TRANSFORMED__){
-            window.__BABEL_TRANSFORMED__ = true;
-            if(window.Babel && typeof window.Babel.transformScriptTags === 'function') {
-              window.Babel.transformScriptTags();
-            }
-          }
-        } catch(e){
-          show('Babel compile failed:\n\n' + (e && e.stack ? e.stack : String(e)));
-        }
-      });
-    })();
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Professional Pizza Dough Calculator</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #B85C38;
+            --primary-dark: #963d1f;
+            --primary-light: #d67951;
+            --secondary: #4A5859;
+            --accent: #E3B04B;
+            --flour: #F5E6D3;
+            --wheat: #E8D4B8;
+            --char: #2C2416;
+            --char-light: #4A3C2E;
+            --success: #52A447;
+            --warning: #E8A647;
+            --danger: #D84848;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        :root {
-            --wheat: #F5E6D3;
-            --wheat-dark: #E8D4B8;
-            --flour: #FFFEF9;
-            --dough: #DFC998;
-            --crust: #8B6F47;
-            --char: #3A3226;
-            --tomato: #C74844;
-            --basil: #5C8A4A;
-            --shadow: rgba(58, 50, 38, 0.1);
-            --shadow-strong: rgba(58, 50, 38, 0.2);
         }
 
         body {
@@ -79,7 +38,7 @@
             background: linear-gradient(135deg, var(--flour) 0%, var(--wheat) 100%);
             min-height: 100vh;
             color: var(--char);
-            padding: 2rem 1rem;
+            padding: 1rem;
         }
 
         .app-container {
@@ -89,444 +48,226 @@
 
         .header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             animation: fadeInDown 0.6s ease-out;
         }
 
         .header h1 {
-            font-family: 'Crimson Pro', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: 2.5rem;
+            color: var(--primary);
             font-weight: 700;
-            color: var(--char);
             margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .header p {
             font-size: 1.1rem;
-            color: var(--crust);
-            font-weight: 300;
+            color: var(--char-light);
+            font-weight: 400;
         }
 
-        .calculator-grid {
+        .tab-navigation {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--char);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Work Sans', sans-serif;
+        }
+
+        .tab-button:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(184, 92, 56, 0.3);
+        }
+
+        .content-area {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
-            animation: fadeIn 0.8s ease-out 0.2s both;
         }
-
-        .tabs {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(255, 254, 249, 0.92);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--wheat-dark);
-            border-radius: 14px;
-            padding: 0.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 6px 22px var(--shadow);
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            border: 2px solid var(--wheat-dark);
-            background: white;
-            color: var(--crust);
-            border-radius: 10px;
-            padding: 0.6rem 0.85rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            border-color: var(--tomato);
-            transform: translateY(-1px);
-        }
-
-        .tab-btn.active {
-            background: var(--tomato);
-            border-color: var(--tomato);
-            color: white;
-        }
-
-        .health-box {
-            border-radius: 12px;
-            padding: 1rem;
-            border: 1px solid var(--wheat-dark);
-            background: white;
-            margin-bottom: 1rem;
-        }
-
-        .health-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.35rem 0.6rem;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: 1px solid var(--wheat-dark);
-        }
-
-        .health-green { background: rgba(92, 138, 74, 0.12); color: var(--basil); }
-        .health-yellow { background: rgba(223, 201, 152, 0.35); color: #7A5A1F; }
-        .health-red { background: rgba(199, 72, 68, 0.14); color: var(--tomato); }
 
         @media (max-width: 968px) {
-            .tabs { border-radius: 12px; }
-            .tab-btn { flex: 1 1 auto; text-align: center; }
-            .calculator-grid {
+            .content-area {
                 grid-template-columns: 1fr;
             }
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 24px var(--shadow), 0 0 0 1px var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.4s ease-out;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px var(--shadow-strong), 0 0 0 1px var(--shadow);
+        .card h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
         }
 
-        .card-title {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--char);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-title::before {
-            content: '';
-            width: 4px;
-            height: 1.75rem;
-            background: var(--tomato);
-            border-radius: 2px;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--crust);
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin: 1rem 0 0.5rem 0;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
-        .input-field, .select-field {
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--char-light);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select {
             width: 100%;
-            padding: 0.875rem 1rem;
-            font-size: 1rem;
-            border: 2px solid var(--wheat-dark);
+            padding: 0.75rem;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            background: var(--flour);
-            color: var(--char);
+            font-size: 1rem;
             font-family: 'Work Sans', sans-serif;
             transition: all 0.3s ease;
         }
 
-        .input-field:focus, .select-field:focus {
+        input:focus,
+        select:focus {
             outline: none;
-            border-color: var(--tomato);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(199, 72, 68, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(184, 92, 56, 0.1);
         }
 
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .style-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .style-button {
-            padding: 1rem;
-            border: 2px solid var(--wheat-dark);
+        button {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
             border-radius: 8px;
-            background: white;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Work Sans', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--crust);
         }
 
-        .style-button:hover {
-            border-color: var(--tomato);
+        button:hover {
+            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow);
+            box-shadow: 0 4px 12px rgba(184, 92, 56, 0.3);
         }
 
-        .style-button.active {
-            border-color: var(--tomato);
-            background: var(--tomato);
-            color: white;
+        button:active {
+            transform: translateY(0);
         }
 
-        .results-section {
-            background: linear-gradient(135deg, var(--wheat) 0%, var(--wheat-dark) 100%);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
+        button.secondary {
+            background: var(--secondary);
         }
 
-        .results-title {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+        button.secondary:hover {
+            background: #3a4647;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
             color: var(--char);
         }
 
-        .ingredient-list {
-            display: grid;
-            gap: 0.75rem;
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .timeline-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .timeline-item strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.5rem;
         }
 
         .ingredient-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px var(--shadow);
-        }
-
-        .ingredient-name {
-            font-weight: 500;
-            color: var(--char);
-        }
-
-        .ingredient-amount {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--tomato);
-        }
-
-        .timeline-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--basil);
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.25rem;
-            padding-bottom: 1.25rem;
-            border-bottom: 1px solid var(--wheat-dark);
-        }
-
-        .timeline-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .timeline-item.highlight {
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFEFC1 100%);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 2px solid var(--tomato);
-            box-shadow: 0 2px 8px rgba(199, 72, 68, 0.2);
-        }
-
-        .timeline-time {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--tomato);
-            min-width: 120px;
-        }
-
-        .timeline-text {
-            color: var(--char);
-            line-height: 1.6;
-        }
-
-        .warning-box {
-            background: #FFF3CD;
-            border-left: 4px solid #FFC107;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #856404;
-        }
-
-        .info-box {
-            background: #E3F2FD;
-            border-left: 4px solid #2196F3;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #0D47A1;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .button {
-            flex: 1;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Work Sans', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .button-primary {
-            background: var(--tomato);
-            color: white;
-        }
-
-        .button-primary:hover {
-            background: #B33F3B;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(199, 72, 68, 0.3);
-        }
-
-        .button-secondary {
-            background: white;
-            color: var(--char);
-            border: 2px solid var(--wheat-dark);
-        }
-
-        .button-secondary:hover {
-            border-color: var(--crust);
-            transform: translateY(-2px);
-        }
-
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .switch {
-            position: relative;
-            width: 50px;
-            height: 26px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--wheat-dark);
-            transition: 0.4s;
-            border-radius: 26px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--tomato);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-
-        .flour-blend {
-            display: grid;
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        .flour-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             padding: 0.75rem;
-            background: var(--flour);
-            border-radius: 6px;
-            border: 1px solid var(--wheat-dark);
-        }
-
-        .hydration-indicator {
-            margin-top: 1rem;
-            padding: 1rem;
             background: white;
             border-radius: 8px;
+            margin-bottom: 0.5rem;
         }
 
-        .hydration-bar {
-            height: 24px;
-            background: var(--wheat);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 0.5rem;
+        .ingredient-item:nth-child(even) {
+            background: #f9f9f9;
         }
 
-        .hydration-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--basil), var(--tomato));
-            transition: width 0.6s ease;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 0.75rem;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
+        .flour-blend-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--accent);
         }
 
         @keyframes fadeIn {
@@ -551,472 +292,739 @@
             }
         }
 
-        .recipe-name-input {
-            margin-bottom: 1.5rem;
-        }
-
-        .saved-recipes {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .saved-recipe-item {
+        .checkbox-group {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.75rem;
-            background: var(--flour);
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .saved-recipe-item:hover {
-            background: var(--wheat);
-            transform: translateX(4px);
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--tomato);
+        .checkbox-group label {
+            margin: 0;
             cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0.25rem 0.5rem;
         }
 
-        .delete-btn:hover {
-            color: #B33F3B;
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .small-text {
+            font-size: 0.85rem;
+            color: var(--char-light);
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <div id="root">Loading...</div>
+    <div id="root"></div>
 
-    <script type="text/babel" data-presets="env,react">
-        window.addEventListener('error', (e) => {
-            const container = document.getElementById('root');
-            if (!container) return;
-            if (container.dataset && container.dataset.hasApp === '1') return;
-            container.innerHTML = '';
-            const pre = document.createElement('pre');
-            pre.style.whiteSpace = 'pre-wrap';
-            pre.style.padding = '16px';
-            pre.style.margin = '16px auto';
-            pre.style.maxWidth = '900px';
-            pre.style.background = 'rgba(255,255,255,0.8)';
-            pre.style.border = '1px solid rgba(0,0,0,0.1)';
-            pre.style.borderRadius = '12px';
-            pre.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-            pre.textContent = 'Uncaught error\n\n' + (e.error && e.error.stack ? e.error.stack : (e.message || String(e)));
-            container.appendChild(pre);
-        });
-
+    <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const FLOUR_DATABASE = {
-            'casillo-la8': {
+        // FLOUR DATABASE - User's exact 4 flours
+        const FLOUR_DATABASE = [
+            {
+                id: 'casillo_la8',
                 name: 'Casillo La 8 Plus Tipo 0',
                 protein: 14.1,
-                w: 350,
-                pl: 0.60,
-                type: 'Tipo 0',
-                hasWheatGerm: true,
-                bestUse: 'Backbone/structure, long ferments',
-                watchOuts: 'Wheat germ enzyme activity'
+                w_index: 350,
+                pl_ratio: 0.60,
+                absorption: 62,
+                type: 'tipo0'
             },
-            'casillo-superiore': {
+            {
+                id: 'casillo_superiore',
                 name: 'Casillo Pizza Superiore Tipo 0',
                 protein: 13.5,
-                w: 340,
-                pl: 0.55,
-                type: 'Tipo 0',
-                hasWheatGerm: false,
-                bestUse: 'Primary pizza flour',
-                watchOuts: 'Above 75-80% hydration needs care'
+                w_index: 340,
+                pl_ratio: 0.55,
+                absorption: 60,
+                type: 'tipo0'
             },
-            'casillo-aroma': {
+            {
+                id: 'casillo_aroma',
                 name: 'Casillo Aroma Type 1',
                 protein: 13.0,
-                w: 280,
-                pl: 0.75,
-                type: 'Type 1',
-                hasWheatGerm: true,
-                bestUse: 'Flavor, color, crispness',
-                watchOuts: 'Best 10-25% blend'
+                w_index: 280,
+                pl_ratio: 0.75,
+                absorption: 58,
+                type: 'type1'
             },
-            'caputo-blue': {
+            {
+                id: 'caputo_blue',
                 name: 'Caputo 00 Blue',
                 protein: 12.5,
-                w: 270,
-                pl: 0.55,
-                type: '00',
-                hasWheatGerm: false,
-                bestUse: 'Classic Neapolitan 60-65%',
-                watchOuts: 'Less ideal for long ferments'
+                w_index: 270,
+                pl_ratio: 0.55,
+                absorption: 55,
+                type: '00'
             }
-        };
+        ];
 
+        // PIZZA STYLE PRESETS
         const PIZZA_STYLES = {
-            'daniel-gigi': {
+            daniel_gigi: {
                 name: 'Daniel Gigi Style',
                 hydration: 87.5,
-                salt: 2.8,
-                flourBlend: [
-                    { flourId: 'casillo-la8', percentage: 50 },
-                    { flourId: 'casillo-superiore', percentage: 35 },
-                    { flourId: 'casillo-aroma', percentage: 15 }
-                ],
-                fermentMethod: 'biga',
-                bigaHydration: 65,
-                bigaPercentage: 50,
-                diastatic: 0.4,
-                timeline: { biga: 17, bulk: 0.75, cold: 60, proof: 2.5 },
-                bakeTemp: { wood: 480, home: 260 },
-                bakeTime: { wood: 1.5, home: 7 }
-            },
-            'contemporary': {
-                name: 'Contemporary Pizza',
-                hydration: 80,
-                salt: 2.5,
-                flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 60 },
-                    { flourId: 'casillo-la8', percentage: 30 },
-                    { flourId: 'casillo-aroma', percentage: 10 }
-                ],
-                fermentMethod: 'biga',
+                bigaPercent: 100,
                 bigaHydration: 60,
-                bigaPercentage: 40,
-                diastatic: 0.3,
-                timeline: { biga: 16, bulk: 1, cold: 48, proof: 3 },
-                bakeTemp: { wood: 400, home: 250 },
-                bakeTime: { wood: 2, home: 7 }
+                saltPercent: 3.0,
+                finalDoughTemp: 24,
+                bulkFermentHours: 24,
+                coldFermentHours: 24,
+                defaultFlours: ['casillo_la8'],
+                fermentationNotes: '24h room temp + 24h cold'
             },
-            'neapolitan': {
+            contemporary: {
+                name: 'Contemporary Pizza',
+                hydration: 70,
+                bigaPercent: 30,
+                bigaHydration: 50,
+                saltPercent: 2.5,
+                finalDoughTemp: 24,
+                bulkFermentHours: 4,
+                coldFermentHours: 72,
+                defaultFlours: ['casillo_superiore'],
+                fermentationNotes: '4h room + 72h cold'
+            },
+            neapolitan: {
                 name: 'Neapolitan',
                 hydration: 62,
-                salt: 2.5,
-                flourBlend: [
-                    { flourId: 'caputo-blue', percentage: 100 }
-                ],
-                fermentMethod: 'direct',
-                diastatic: 0,
-                timeline: { bulk: 2, cold: 24, proof: 4 },
-                bakeTemp: { wood: 485, home: 260 },
-                bakeTime: { wood: 1, home: 6 }
+                bigaPercent: 0,
+                bigaHydration: 50,
+                saltPercent: 2.8,
+                finalDoughTemp: 26,
+                bulkFermentHours: 8,
+                coldFermentHours: 0,
+                defaultFlours: ['caputo_blue'],
+                fermentationNotes: '8h room temp'
             },
-            'ny-style': {
+            ny_style: {
                 name: 'New York Style',
-                hydration: 63,
-                salt: 2,
-                oil: 2,
-                sugar: 2,
-                flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 100 }
-                ],
-                fermentMethod: 'direct',
-                timeline: { bulk: 2, cold: 48, proof: 3 },
-                bakeTemp: { wood: 370, home: 260 },
-                bakeTime: { wood: 5, home: 12 }
-            },
-            'detroit': {
-                name: 'Detroit Style',
-                hydration: 72,
-                salt: 2.2,
-                oil: 3,
-                flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 100 }
-                ],
-                fermentMethod: 'direct',
-                timeline: { bulk: 2, cold: 24, proof: 3 },
-                bakeTemp: { wood: 260, home: 260 },
-                bakeTime: { wood: 12, home: 12 }
-            },
-            'roman': {
-                name: 'Roman al Taglio',
-                hydration: 78,
-                salt: 2.5,
-                oil: 3,
-                flourBlend: [
-                    { flourId: 'casillo-superiore', percentage: 70 },
-                    { flourId: 'caputo-blue', percentage: 30 }
-                ],
-                fermentMethod: 'biga',
+                hydration: 65,
+                bigaPercent: 20,
                 bigaHydration: 55,
-                bigaPercentage: 30,
-                diastatic: 0.3,
-                timeline: { biga: 16, bulk: 1, cold: 24, proof: 3 },
-                bakeTemp: { wood: 300, home: 230 },
-                bakeTime: { wood: 15, home: 15 }
+                saltPercent: 2.2,
+                finalDoughTemp: 24,
+                bulkFermentHours: 2,
+                coldFermentHours: 48,
+                defaultFlours: ['casillo_superiore'],
+                fermentationNotes: '2h room + 48h cold'
+            },
+            roman: {
+                name: 'Roman Style',
+                hydration: 80,
+                bigaPercent: 40,
+                bigaHydration: 50,
+                saltPercent: 2.5,
+                finalDoughTemp: 24,
+                bulkFermentHours: 6,
+                coldFermentHours: 48,
+                defaultFlours: ['casillo_la8', 'casillo_aroma'],
+                fermentationNotes: '6h room + 48h cold'
+            },
+            detroit: {
+                name: 'Detroit Style',
+                hydration: 75,
+                bigaPercent: 0,
+                bigaHydration: 50,
+                saltPercent: 2.3,
+                finalDoughTemp: 25,
+                bulkFermentHours: 4,
+                coldFermentHours: 24,
+                defaultFlours: ['casillo_superiore'],
+                fermentationNotes: '4h room + 24h cold'
             }
         };
 
         function PizzaCalculator() {
+            // STATE MANAGEMENT
             const [activeTab, setActiveTab] = useState('setup');
-            const [pizzaStyle, setPizzaStyle] = useState('daniel-gigi');
+            const [pizzaStyle, setPizzaStyle] = useState('daniel_gigi');
             const [numPizzas, setNumPizzas] = useState(4);
-            const [doughBallWeight, setDoughBallWeight] = useState(280);
-            const [roomTemp, setRoomTemp] = useState(22);
-            const [flourTemp, setFlourTemp] = useState(20);
-            const [fridgeTemp, setFridgeTemp] = useState(3.5);
-            const [desiredFDT, setDesiredFDT] = useState(24);
-            const [mixerType, setMixerType] = useState('medium-high');
-            const [showBakersPercentage, setShowBakersPercentage] = useState(false);
-            const [customHydration, setCustomHydration] = useState(null);
-            const [customBigaPercent, setCustomBigaPercent] = useState(null);
-            const [customBigaHydration, setCustomBigaHydration] = useState(null);
-            const [customBigaYeastPercent, setCustomBigaYeastPercent] = useState(0.30);
-            const [savedRecipes, setSavedRecipes] = useState([]);
-            const [recipeName, setRecipeName] = useState('');
-            const [timelineMode, setTimelineMode] = useState('forward');
-            const [bakeDateTime, setBakeDateTime] = useState('');
-            const [bigaTemp, setBigaTemp] = useState(13);
-            const [bulkTemp, setBulkTemp] = useState(22);
-            const [proofTemp, setProofTemp] = useState(18);
-            const [customBigaHours, setCustomBigaHours] = useState(null);
-            const [customBulkHours, setCustomBulkHours] = useState(null);
-            const [customColdHours, setCustomColdHours] = useState(null);
-            const [customProofHours, setCustomProofHours] = useState(null);
-            const [useLemadyYeast, setUseLemadyYeast] = useState(false);
-            const [ovenType, setOvenType] = useState('home');
+            const [doughBallWeight, setDoughBallWeight] = useState(2600);
+            
+            // Flour blend
+            const [autoFlourBlend, setAutoFlourBlend] = useState(true);
+            const [doughPriority, setDoughPriority] = useState('balanced');
+            const [flourBlend, setFlourBlend] = useState([
+                { flourId: 'casillo_la8', percentage: 100 }
+            ]);
+            
+            // Fermentation
             const [yeastType, setYeastType] = useState('instant');
+            const [customBigaPercent, setCustomBigaPercent] = useState('');
+            const [customBigaHydration, setCustomBigaHydration] = useState('');
+            const [customBulkHours, setCustomBulkHours] = useState('');
+            const [customColdHours, setCustomColdHours] = useState('');
+            const [bulkFermentTemp, setBulkFermentTemp] = useState(20);
+            const [coldFermentTemp, setColdFermentTemp] = useState(4);
+            
+            // Temperatures
+            const [mixerType, setMixerType] = useState('spiral_high');
+            const [roomTemp, setRoomTemp] = useState(20);
+            const [flourTemp, setFlourTemp] = useState(20);
+            
+            // Timeline mode
+            const [timelineMode, setTimelineMode] = useState('forward');
+            const [targetBakeDate, setTargetBakeDate] = useState('');
+            const [targetBakeTime, setTargetBakeTime] = useState('18:00');
 
-            useEffect(() => {
-                const saved = localStorage.getItem('pizzaRecipes');
-                if (saved) {
-                    setSavedRecipes(JSON.parse(saved));
-                }
-            }, []);
+            // Get current style config
+            const currentStyle = PIZZA_STYLES[pizzaStyle];
 
-            const switchTab = (tabKey) => {
-                setActiveTab(tabKey);
-                try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+            // CALCULATION FUNCTIONS
+            
+            const getTotalFlour = () => {
+                return numPizzas * doughBallWeight;
             };
 
-            const FRICTION_FACTORS = {
-                'hand': 6,
-                'no-knead': 0,
-                'low': 14,
-                'medium': 22,
-                'spiral-low': 18,
-                'spiral-high': 22,
-                'medium-high': 26,
-                'high': 28
+            const getBigaPercent = () => {
+                return customBigaPercent !== '' ? parseFloat(customBigaPercent) : currentStyle.bigaPercent;
             };
 
-            const calculateFermentationHours = (baseHours, baseTemp, actualTemp) => {
-                const tempDiff = actualTemp - baseTemp;
-                const q10Factor = Math.pow(2, tempDiff / 10);
-                return baseHours / q10Factor;
-            };
-
-            const getBigaHours = () => {
-                if (customBigaHours !== null) return customBigaHours;
-                return calculateFermentationHours(17, 13, bigaTemp);
+            const getBigaHydration = () => {
+                return customBigaHydration !== '' ? parseFloat(customBigaHydration) : currentStyle.bigaHydration;
             };
 
             const getBulkHours = () => {
-                if (customBulkHours !== null) return customBulkHours;
-                const baseHours = styleConfig.fermentMethod === 'biga' ? 0.75 : 2;
-                return calculateFermentationHours(baseHours, 22, bulkTemp);
+                return customBulkHours !== '' ? parseFloat(customBulkHours) : currentStyle.bulkFermentHours;
             };
 
-            const getColdFermentHours = () => {
-                if (customColdHours !== null) return customColdHours;
-                const baseHours = styleConfig.timeline.cold || 48;
-                return calculateFermentationHours(baseHours, 3.5, fridgeTemp);
+            const getColdHours = () => {
+                return customColdHours !== '' ? parseFloat(customColdHours) : currentStyle.coldFermentHours;
             };
 
-            const getProofHours = () => {
-                if (customProofHours !== null) return customProofHours;
-                const baseHours = styleConfig.timeline.proof || 3;
-                return calculateFermentationHours(baseHours, 18, proofTemp);
+            const getBigaFlour = () => {
+                const totalFlour = getTotalFlour();
+                return Math.round(totalFlour * (getBigaPercent() / 100));
             };
 
-            const styleConfig = PIZZA_STYLES[pizzaStyle];
-            const hydration = customHydration || styleConfig.hydration;
-            const bigaPercent = (customBigaPercent !== null && !Number.isNaN(customBigaPercent)) ? customBigaPercent : (styleConfig.bigaPercentage || 0);
-            const bigaHydration = (customBigaHydration !== null && !Number.isNaN(customBigaHydration)) ? customBigaHydration : (styleConfig.bigaHydration || 0);
-            const bigaYeastPct = (customBigaYeastPercent !== null && !Number.isNaN(customBigaYeastPercent)) ? customBigaYeastPercent : 0.30;
-
-            const totalDough = numPizzas * doughBallWeight;
-            const totalFlour = Math.round(totalDough / (1 + (hydration / 100) + (styleConfig.salt / 100) + ((styleConfig.oil || 0) / 100) + ((styleConfig.sugar || 0) / 100) + ((styleConfig.diastatic || 0) / 100)));
-
-            const frictionFactor = FRICTION_FACTORS[mixerType];
-            const waterTemp = Math.round((desiredFDT * 4) - flourTemp - roomTemp - frictionFactor);
-
-            const YEAST_CONVERSIONS = {
-                'instant': 1.0,
-                'active-dry': 1.25,
-                'fresh': 3.0,
-                'lemady': 1.0
+            const getBigaWater = () => {
+                return Math.round(getBigaFlour() * (getBigaHydration() / 100));
             };
 
-            const calculateAverageFermentTemp = () => {
-                const bigaHours = getBigaHours();
+            const getMainDoughFlour = () => {
+                return getTotalFlour() - getBigaFlour();
+            };
+
+            const getTotalWater = () => {
+                const totalFlour = getTotalFlour();
+                return Math.round(totalFlour * (currentStyle.hydration / 100));
+            };
+
+            const getMainDoughWater = () => {
+                return getTotalWater() - getBigaWater();
+            };
+
+            const getSalt = () => {
+                const totalFlour = getTotalFlour();
+                return Math.round(totalFlour * (currentStyle.saltPercent / 100));
+            };
+
+            // YEAST CALCULATION - Enhanced with all factors
+            const calculateYeast = () => {
+                const totalFlour = getTotalFlour();
                 const bulkHours = getBulkHours();
-                const coldHours = getColdFermentHours();
-                const proofHours = getProofHours();
-                const totalHours = bigaHours + bulkHours + coldHours + proofHours;
+                const coldHours = getColdHours();
                 
-                if (totalHours === 0) return 15;
+                // Base yeast calculation using Q10=2 rule
+                // Reference: 24h at 20°C = 0.2% instant yeast
                 
-                const weightedTemp = (
-                    bigaHours * bigaTemp +
-                    bulkHours * bulkTemp +
-                    coldHours * fridgeTemp +
-                    proofHours * proofTemp
-                ) / totalHours;
+                // Calculate effective fermentation time at 20°C reference
+                const bulkTempFactor = Math.pow(2, (bulkFermentTemp - 20) / 10);
+                const coldTempFactor = Math.pow(2, (coldFermentTemp - 20) / 10);
                 
-                return weightedTemp;
-            };
-
-            const totalFermentHours = getBigaHours() + getBulkHours() + getColdFermentHours() + getProofHours();
-            
-            let baseYeast;
-            if (totalFermentHours >= 90) baseYeast = 0.15;
-            else if (totalFermentHours >= 60) baseYeast = 0.2;
-            else if (totalFermentHours >= 30) baseYeast = 0.4;
-            else baseYeast = 0.8;
-            
-            const avgTemp = calculateAverageFermentTemp();
-            let tempFactor = 1.0;
-            if (avgTemp > 18) tempFactor = 0.9;
-            else if (avgTemp < 12) tempFactor = 1.1;
-            
-            const saltPercent = styleConfig.salt;
-            let saltFactor = 1.0;
-            if (saltPercent > 2.5) saltFactor = 1.1;
-            else if (saltPercent < 2) saltFactor = 0.9;
-            
-            let hydrationFactor = 1.0;
-            if (hydration > 75) hydrationFactor = 0.95;
-            else if (hydration < 65) hydrationFactor = 1.05;
-            
-            const instantYeastPct = baseYeast * tempFactor * saltFactor * hydrationFactor;
-            const yeastPercentage = instantYeastPct * YEAST_CONVERSIONS[yeastType];
-            const totalYeast = (totalFlour * yeastPercentage / 100).toFixed(1);
-
-            const yeastCalc = {
-                baseYeast,
-                tempFactor,
-                saltFactor,
-                hydrationFactor,
-                avgTemp,
-                instantYeastPct,
-                totalHours: totalFermentHours
-            };
-
-            let ingredients = {};
-
-            if (styleConfig.fermentMethod === 'biga') {
-                const bigaFlour = Math.round(totalFlour * (bigaPercent / 100));
-                const bigaWater = Math.round(bigaFlour * (bigaHydration / 100));
-                const bigaYeast = (bigaFlour * (bigaYeastPct / 100)).toFixed(1);
-
-                const finalFlour = totalFlour - bigaFlour;
-                const totalWater = Math.round(totalFlour * (hydration / 100));
-                const finalWater = totalWater - bigaWater;
-
-                const yeastDiff = parseFloat(totalYeast) - parseFloat(bigaYeast);
-                const yeastWasClamped = yeastDiff < 0;
-                const finalYeastVal = Math.max(0, yeastDiff);
-                const finalYeast = finalYeastVal.toFixed(1);
-
-                ingredients = {
-                    biga: {
-                        flour: bigaFlour,
-                        water: bigaWater,
-                        yeast: bigaYeast
-                    },
-                    final: {
-                        flour: finalFlour,
-                        water: finalWater,
-                        salt: Math.round(totalFlour * (styleConfig.salt / 100)),
-                        yeast: finalYeast,
-                        ...(styleConfig.diastatic && { diastatic: (totalFlour * styleConfig.diastatic / 100).toFixed(1) }),
-                        ...(styleConfig.oil && { oil: Math.round(totalFlour * styleConfig.oil / 100) }),
-                        ...(styleConfig.sugar && { sugar: Math.round(totalFlour * styleConfig.sugar / 100) })
-                    },
-                    totals: {
-                        flour: totalFlour,
-                        water: Math.round(totalFlour * (hydration / 100)),
-                        salt: Math.round(totalFlour * (styleConfig.salt / 100)),
-                        yeast: totalYeast
-                    },
-                    meta: {
-                        bigaPercent,
-                        bigaHydration,
-                        bigaYeastPct,
-                        finalWaterNegative: finalWater < 0,
-                        totalYeastLessThanBiga: parseFloat(totalYeast) < parseFloat(bigaYeast),
-                        yeastWasClamped
+                const effectiveBulkHours = bulkHours * bulkTempFactor;
+                const effectiveColdHours = coldHours * coldTempFactor;
+                const totalEffectiveHours = effectiveBulkHours + effectiveColdHours;
+                
+                // Base yeast for 24h at 20°C
+                let yeastPercent = 0.2;
+                
+                // Adjust for time
+                if (totalEffectiveHours > 0) {
+                    yeastPercent = (24 / totalEffectiveHours) * 0.2;
+                }
+                
+                // Salt inhibition factor (salt slows fermentation)
+                const saltFactor = 1 + (currentStyle.saltPercent / 100) * 0.3;
+                yeastPercent *= saltFactor;
+                
+                // Hydration factor (higher hydration = faster fermentation)
+                const hydrationFactor = 1 - ((currentStyle.hydration - 65) / 100) * 0.15;
+                yeastPercent *= hydrationFactor;
+                
+                // Biga factor (pre-ferment reduces main dough yeast need)
+                if (getBigaPercent() > 0) {
+                    const bigaFactor = 1 - (getBigaPercent() / 100) * 0.3;
+                    yeastPercent *= bigaFactor;
+                }
+                
+                // Ensure reasonable bounds
+                yeastPercent = Math.max(0.05, Math.min(2.0, yeastPercent));
+                
+                // Convert to grams
+                const instantYeastGrams = Math.round(totalFlour * (yeastPercent / 100) * 10) / 10;
+                
+                // Convert to other yeast types
+                const conversions = {
+                    instant: instantYeastGrams,
+                    'active-dry': Math.round(instantYeastGrams * 1.25 * 10) / 10,
+                    fresh: Math.round(instantYeastGrams * 3.0 * 10) / 10,
+                    lemady: Math.round(instantYeastGrams * 1.0 * 10) / 10
+                };
+                
+                return {
+                    grams: conversions[yeastType],
+                    percent: Math.round(yeastPercent * 100) / 100,
+                    factors: {
+                        timeAdj: Math.round((24 / totalEffectiveHours) * 100) / 100,
+                        saltAdj: Math.round(saltFactor * 100) / 100,
+                        hydrationAdj: Math.round(hydrationFactor * 100) / 100,
+                        bigaAdj: getBigaPercent() > 0 ? Math.round((1 - (getBigaPercent() / 100) * 0.3) * 100) / 100 : 1.0
                     }
                 };
-            } else {
-                ingredients = {
-                    flour: totalFlour,
-                    water: Math.round(totalFlour * (hydration / 100)),
-                    salt: Math.round(totalFlour * (styleConfig.salt / 100)),
-                    yeast: totalYeast,
-                    ...(styleConfig.diastatic && { diastatic: (totalFlour * styleConfig.diastatic / 100).toFixed(1) }),
-                    ...(styleConfig.oil && { oil: Math.round(totalFlour * styleConfig.oil / 100) }),
-                    ...(styleConfig.sugar && { sugar: Math.round(totalFlour * styleConfig.sugar / 100) })
+            };
+
+            // Biga yeast (minimal)
+            const getBigaYeast = () => {
+                if (getBigaPercent() === 0) return 0;
+                const bigaFlour = getBigaFlour();
+                // Very small amount - biga ferments slowly
+                return Math.round(bigaFlour * 0.001 * 10) / 10;
+            };
+
+            // Main dough yeast
+            const getMainDoughYeast = () => {
+                const total = calculateYeast().grams;
+                const bigaYeast = getBigaYeast();
+                return Math.round((total - bigaYeast) * 10) / 10;
+            };
+
+            // WATER TEMPERATURE CALCULATION
+            const getFrictionFactor = () => {
+                const mixerFactors = {
+                    'hand': 0,
+                    'stand_low': 10,
+                    'stand_high': 15,
+                    'spiral_low': 20,
+                    'spiral_high': 22
                 };
-            }
+                return mixerFactors[mixerType] || 0;
+            };
 
-            const flourBasis = (styleConfig.fermentMethod === 'biga' ? ingredients.totals.flour : ingredients.flour);
-            const flourBlend = styleConfig.flourBlend.map(item => ({
-                ...item,
-                flourData: FLOUR_DATABASE[item.flourId],
-                grams: Math.round(flourBasis * (item.percentage / 100))
-            }));
+            const getWaterTemp = () => {
+                const fdt = currentStyle.finalDoughTemp;
+                const friction = getFrictionFactor();
+                
+                // Formula: Water Temp = (FDT × 4) - flour temp - room temp - friction
+                const waterTemp = (fdt * 4) - flourTemp - roomTemp - friction;
+                
+                return Math.round(waterTemp);
+            };
 
-            const warnings = [];
-            if (hydration > 90) warnings.push('⚠️ Very high hydration (>90%) - expert level');
-            if (hydration < 55) warnings.push('⚠️ Low hydration (<55%) - consider increasing');
-            if (waterTemp < 5) warnings.push('⚠️ Water temp too low - use ice water');
-            if (waterTemp > 45) warnings.push('⚠️ Water temp too high - may kill yeast');
+            // FLOUR BLEND RECOMMENDATION
+            const recommendFlourBlend = () => {
+                if (!autoFlourBlend) return flourBlend;
+                
+                const priorities = {
+                    balanced: { w_weight: 0.33, pl_weight: 0.33, protein_weight: 0.34 },
+                    extensible: { w_weight: 0.2, pl_weight: 0.5, protein_weight: 0.3 },
+                    strength: { w_weight: 0.5, pl_weight: 0.2, protein_weight: 0.3 }
+                };
+                
+                const priority = priorities[doughPriority];
+                
+                // Target values based on pizza style
+                const targets = {
+                    w_index: 300,
+                    pl_ratio: 0.60,
+                    protein: 13.0
+                };
+                
+                // Score each flour
+                const scoredFlours = FLOUR_DATABASE.map(flour => {
+                    const wScore = 1 - Math.abs(flour.w_index - targets.w_index) / targets.w_index;
+                    const plScore = 1 - Math.abs(flour.pl_ratio - targets.pl_ratio) / targets.pl_ratio;
+                    const proteinScore = 1 - Math.abs(flour.protein - targets.protein) / targets.protein;
+                    
+                    const totalScore = (wScore * priority.w_weight) + 
+                                      (plScore * priority.pl_weight) + 
+                                      (proteinScore * priority.protein_weight);
+                    
+                    return { ...flour, score: totalScore };
+                });
+                
+                // Sort by score
+                scoredFlours.sort((a, b) => b.score - a.score);
+                
+                // Return top flour as 100%
+                return [{ flourId: scoredFlours[0].id, percentage: 100 }];
+            };
 
-            const saveRecipe = () => {
-                if (!recipeName.trim()) {
-                    alert('Please enter a recipe name');
-                    return;
+            // Update flour blend when auto mode changes
+            useEffect(() => {
+                if (autoFlourBlend) {
+                    setFlourBlend(recommendFlourBlend());
                 }
+            }, [autoFlourBlend, doughPriority, pizzaStyle]);
 
+            // TIMELINE GENERATION
+            const generateTimeline = () => {
+                const timeline = [];
+                const now = new Date();
+                
+                if (timelineMode === 'forward') {
+                    // Forward timeline - starting now
+                    
+                    // Biga preparation
+                    if (getBigaPercent() > 0) {
+                        timeline.push({
+                            time: formatDateTime(now),
+                            action: 'Prepare Biga',
+                            detail: `Mix ${getBigaFlour()}g flour + ${getBigaWater()}g water + ${getBigaYeast()}g yeast`,
+                            temperature: `Let ferment at room temp (${roomTemp}°C)`
+                        });
+                        
+                        // Biga ready time (16-24 hours)
+                        const bigaReady = new Date(now.getTime() + 18 * 60 * 60 * 1000);
+                        timeline.push({
+                            time: formatDateTime(bigaReady),
+                            action: 'Biga Ready',
+                            detail: 'Biga should be bubbly and expanded',
+                            temperature: null
+                        });
+                    }
+                    
+                    // Main mix time
+                    const mixTime = getBigaPercent() > 0 ? 
+                        new Date(now.getTime() + 18 * 60 * 60 * 1000) : 
+                        now;
+                    
+                    timeline.push({
+                        time: formatDateTime(mixTime),
+                        action: 'Mix Main Dough',
+                        detail: `Use ${getWaterTemp()}°C water. Mix all ingredients.`,
+                        temperature: `Target final dough temp: ${currentStyle.finalDoughTemp}°C`
+                    });
+                    
+                    // Bulk fermentation
+                    const bulkEnd = new Date(mixTime.getTime() + getBulkHours() * 60 * 60 * 1000);
+                    timeline.push({
+                        time: formatDateTime(bulkEnd),
+                        action: 'Ball Dough',
+                        detail: `Divide into ${numPizzas} × ${doughBallWeight}g balls`,
+                        temperature: `Bulk ferment at ${bulkFermentTemp}°C`
+                    });
+                    
+                    // Cold fermentation (if any)
+                    if (getColdHours() > 0) {
+                        const coldEnd = new Date(bulkEnd.getTime() + getColdHours() * 60 * 60 * 1000);
+                        timeline.push({
+                            time: formatDateTime(coldEnd),
+                            action: 'Ready to Bake',
+                            detail: 'Remove from fridge 1-2 hours before baking',
+                            temperature: `Cold ferment at ${coldFermentTemp}°C`
+                        });
+                    } else {
+                        timeline.push({
+                            time: formatDateTime(bulkEnd),
+                            action: 'Ready to Bake',
+                            detail: 'Dough is ready after balling',
+                            temperature: null
+                        });
+                    }
+                    
+                } else {
+                    // Reverse timeline - work backwards from bake time
+                    if (!targetBakeDate || !targetBakeTime) {
+                        return [{
+                            time: 'Please set target bake date and time',
+                            action: 'Configuration Required',
+                            detail: 'Use the inputs above to set your target bake time',
+                            temperature: null
+                        }];
+                    }
+                    
+                    const bakeDateTime = new Date(`${targetBakeDate}T${targetBakeTime}`);
+                    
+                    timeline.push({
+                        time: formatDateTime(bakeDateTime),
+                        action: 'BAKE TIME',
+                        detail: 'Your pizzas are ready to bake!',
+                        temperature: '🔥'
+                    });
+                    
+                    // Work backwards
+                    // Remove from fridge 2 hours before
+                    const removeFromFridge = new Date(bakeDateTime.getTime() - 2 * 60 * 60 * 1000);
+                    
+                    if (getColdHours() > 0) {
+                        timeline.push({
+                            time: formatDateTime(removeFromFridge),
+                            action: 'Remove from Fridge',
+                            detail: 'Let dough warm up to room temp',
+                            temperature: null
+                        });
+                        
+                        // Start of cold ferment
+                        const coldStart = new Date(removeFromFridge.getTime() - getColdHours() * 60 * 60 * 1000);
+                        timeline.push({
+                            time: formatDateTime(coldStart),
+                            action: 'Ball & Refrigerate',
+                            detail: `Divide into ${numPizzas} × ${doughBallWeight}g balls, place in fridge`,
+                            temperature: `${coldFermentTemp}°C for ${getColdHours()}h`
+                        });
+                        
+                        // Mix time (before cold ferment)
+                        const mixTime = new Date(coldStart.getTime() - getBulkHours() * 60 * 60 * 1000);
+                        timeline.push({
+                            time: formatDateTime(mixTime),
+                            action: 'Mix Main Dough',
+                            detail: `Water temp: ${getWaterTemp()}°C`,
+                            temperature: `Bulk ferment at ${bulkFermentTemp}°C for ${getBulkHours()}h`
+                        });
+                        
+                        // Biga preparation
+                        if (getBigaPercent() > 0) {
+                            const bigaStart = new Date(mixTime.getTime() - 18 * 60 * 60 * 1000);
+                            timeline.push({
+                                time: formatDateTime(bigaStart),
+                                action: 'START: Prepare Biga',
+                                detail: `${getBigaFlour()}g flour + ${getBigaWater()}g water + ${getBigaYeast()}g yeast`,
+                                temperature: `Room temp for ~18h`
+                            });
+                        } else {
+                            timeline.push({
+                                time: formatDateTime(mixTime),
+                                action: 'START HERE',
+                                detail: 'Begin your dough preparation at this time',
+                                temperature: null
+                            });
+                        }
+                    } else {
+                        // No cold ferment - just bulk
+                        const mixTime = new Date(bakeDateTime.getTime() - 2 * 60 * 60 * 1000 - getBulkHours() * 60 * 60 * 1000);
+                        
+                        timeline.push({
+                            time: formatDateTime(mixTime),
+                            action: 'Mix & Ball',
+                            detail: `Mix dough, let rise ${getBulkHours()}h, then ball`,
+                            temperature: `${bulkFermentTemp}°C`
+                        });
+                        
+                        if (getBigaPercent() > 0) {
+                            const bigaStart = new Date(mixTime.getTime() - 18 * 60 * 60 * 1000);
+                            timeline.push({
+                                time: formatDateTime(bigaStart),
+                                action: 'START: Prepare Biga',
+                                detail: `${getBigaFlour()}g flour + ${getBigaWater()}g water + ${getBigaYeast()}g yeast`,
+                                temperature: 'Room temp for ~18h'
+                            });
+                        } else {
+                            timeline.push({
+                                time: formatDateTime(mixTime),
+                                action: 'START HERE',
+                                detail: 'Begin your dough preparation',
+                                temperature: null
+                            });
+                        }
+                    }
+                    
+                    // Reverse the array so it shows chronologically
+                    timeline.reverse();
+                }
+                
+                return timeline;
+            };
+
+            const formatDateTime = (date) => {
+                return date.toLocaleString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            };
+
+            // DOUGH HEALTH ASSESSMENT
+            const assessDoughHealth = () => {
+                const issues = [];
+                const warnings = [];
+                
+                // Check hydration vs flour strength
+                const avgWIndex = flourBlend.reduce((sum, item) => {
+                    const flour = FLOUR_DATABASE.find(f => f.id === item.flourId);
+                    return sum + (flour.w_index * item.percentage / 100);
+                }, 0);
+                
+                if (currentStyle.hydration > 75 && avgWIndex < 300) {
+                    warnings.push('High hydration with moderate strength flour - dough may be slack');
+                }
+                
+                if (currentStyle.hydration < 60 && avgWIndex > 320) {
+                    warnings.push('Low hydration with strong flour - dough may be tight');
+                }
+                
+                // Check fermentation time
+                const totalHours = getBulkHours() + getColdHours();
+                if (totalHours < 12) {
+                    warnings.push('Short fermentation time - flavor development may be limited');
+                }
+                
+                if (totalHours > 96) {
+                    warnings.push('Very long fermentation - monitor for over-fermentation');
+                }
+                
+                // Check yeast amount
+                const yeastData = calculateYeast();
+                if (yeastData.percent < 0.1) {
+                    warnings.push('Very low yeast - ensure fermentation conditions are optimal');
+                }
+                
+                if (yeastData.percent > 1.5) {
+                    warnings.push('High yeast amount - fermentation will be very fast');
+                }
+                
+                // Check salt
+                if (currentStyle.saltPercent < 2.0) {
+                    warnings.push('Low salt - dough may ferment too quickly');
+                }
+                
+                if (currentStyle.saltPercent > 3.2) {
+                    warnings.push('High salt - fermentation will be slowed significantly');
+                }
+                
+                return { issues, warnings };
+            };
+
+            // SAVE/LOAD FUNCTIONS
+            const saveRecipe = () => {
                 const recipe = {
-                    name: recipeName,
                     pizzaStyle,
                     numPizzas,
                     doughBallWeight,
-                    roomTemp,
-                    flourTemp,
-                    fridgeTemp,
-                    desiredFDT,
-                    mixerType,
+                    flourBlend,
                     yeastType,
-                    ovenType,
-                    customHydration,
-                    bigaTemp,
-                    bulkTemp,
-                    proofTemp,
-                    customBigaHours,
-                    customBulkHours,
-                    customColdHours,
-                    customProofHours,
                     customBigaPercent,
                     customBigaHydration,
-                    customBigaYeastPercent,
+                    customBulkHours,
+                    customColdHours,
+                    bulkFermentTemp,
+                    coldFermentTemp,
+                    mixerType,
+                    roomTemp,
+                    flourTemp,
                     timestamp: new Date().toISOString()
                 };
-
-                const updated = [...savedRecipes, recipe];
-                setSavedRecipes(updated);
-                localStorage.setItem('pizzaRecipes', JSON.stringify(updated));
-                setRecipeName('');
-                alert('Recipe saved!');
+                
+                const recipes = JSON.parse(localStorage.getItem('pizzaRecipes') || '[]');
+                const recipeName = prompt('Enter a name for this recipe:');
+                if (recipeName) {
+                    recipe.name = recipeName;
+                    recipes.push(recipe);
+                    localStorage.setItem('pizzaRecipes', JSON.stringify(recipes));
+                    alert('Recipe saved!');
+                }
             };
+
+            const loadRecipe = () => {
+                const recipes = JSON.parse(localStorage.getItem('pizzaRecipes') || '[]');
+                if (recipes.length === 0) {
+                    alert('No saved recipes found');
+                    return;
+                }
+                
+                const recipeList = recipes.map((r, i) => `${i + 1}. ${r.name} (${new Date(r.timestamp).toLocaleDateString()})`).join('\n');
+                const choice = prompt(`Select a recipe:\n${recipeList}\n\nEnter number:`);
+                
+                if (choice) {
+                    const index = parseInt(choice) - 1;
+                    if (index >= 0 && index < recipes.length) {
+                        const recipe = recipes[index];
+                        setPizzaStyle(recipe.pizzaStyle);
+                        setNumPizzas(recipe.numPizzas);
+                        setDoughBallWeight(recipe.doughBallWeight);
+                        setFlourBlend(recipe.flourBlend);
+                        setYeastType(recipe.yeastType);
+                        setCustomBigaPercent(recipe.customBigaPercent);
+                        setCustomBigaHydration(recipe.customBigaHydration);
+                        setCustomBulkHours(recipe.customBulkHours);
+                        setCustomColdHours(recipe.customColdHours);
+                        setBulkFermentTemp(recipe.bulkFermentTemp);
+                        setColdFermentTemp(recipe.coldFermentTemp);
+                        setMixerType(recipe.mixerType);
+                        setRoomTemp(recipe.roomTemp);
+                        setFlourTemp(recipe.flourTemp);
+                        alert('Recipe loaded!');
+                    }
+                }
+            };
+
+            const exportRecipe = () => {
+                const yeastData = calculateYeast();
+                const health = assessDoughHealth();
+                
+                let text = `=== PIZZA DOUGH RECIPE ===\n`;
+                text += `Style: ${currentStyle.name}\n`;
+                text += `${numPizzas} pizzas × ${doughBallWeight}g = ${getTotalFlour()}g total flour\n\n`;
+                
+                text += `=== INGREDIENTS ===\n`;
+                text += `Total Flour: ${getTotalFlour()}g\n`;
+                
+                if (getBigaPercent() > 0) {
+                    text += `\nBIGA (${getBigaPercent()}% of flour):\n`;
+                    text += `  Flour: ${getBigaFlour()}g\n`;
+                    text += `  Water (${getBigaHydration()}%): ${getBigaWater()}g\n`;
+                    text += `  Yeast: ${getBigaYeast()}g ${yeastType}\n`;
+                    text += `\nMAIN DOUGH:\n`;
+                    text += `  Flour: ${getMainDoughFlour()}g\n`;
+                    text += `  Water: ${getMainDoughWater()}g\n`;
+                    text += `  Yeast: ${getMainDoughYeast()}g ${yeastType}\n`;
+                } else {
+                    text += `Water (${currentStyle.hydration}%): ${getTotalWater()}g\n`;
+                    text += `Yeast (${yeastData.percent}%): ${yeastData.grams}g ${yeastType}\n`;
+                }
+                
+                text += `Salt (${currentStyle.saltPercent}%): ${getSalt()}g\n\n`;
+                
+                text += `=== INSTRUCTIONS ===\n`;
+                generateTimeline().forEach(step => {
+                    text += `\n${step.time}\n`;
+                    text += `${step.action}\n`;
+                    text += `${step.detail}\n`;
+                    if (step.temperature) text += `${step.temperature}\n`;
+                });
+                
+                if (health.warnings.length > 0) {
+                    text += `\n=== NOTES ===\n`;
+                    health.warnings.forEach(w => text += `⚠️  ${w}\n`);
+                }
+                
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `pizza-recipe-${Date.now()}.txt`;
+                a.click();
+            };
+
+            // RENDER
+            const health = assessDoughHealth();
+            const yeastData = calculateYeast();
 
             return (
                 <div className="app-container">
@@ -1025,377 +1033,613 @@
                         <p>Professional recipe builder with temperature calculations</p>
                     </div>
 
-                    <div className="tabs">
-                        {[
-                            ['setup', 'Setup'],
-                            ['flour', 'Flour'],
-                            ['fermentation', 'Fermentation'],
-                            ['temps', 'Temperatures'],
-                            ['recipe', 'Recipe'],
-                            ['timeline', 'Timeline'],
-                            ['save', 'Save']
-                        ].map(([k, label]) => (
-                            <button
-                                key={k}
-                                className={`tab-btn ${activeTab === k ? 'active' : ''}`}
-                                onClick={() => switchTab(k)}
-                                type="button"
-                            >
-                                {label}
-                            </button>
-                        ))}
+                    <div className="tab-navigation">
+                        <button 
+                            className={`tab-button ${activeTab === 'setup' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('setup')}
+                        >
+                            Setup
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'flour' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('flour')}
+                        >
+                            Flour
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'fermentation' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('fermentation')}
+                        >
+                            Fermentation
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'temps' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('temps')}
+                        >
+                            Temperatures
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'recipe' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('recipe')}
+                        >
+                            Recipe
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'timeline' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('timeline')}
+                        >
+                            Timeline
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'save' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('save')}
+                        >
+                            Save
+                        </button>
                     </div>
 
-                    <div className="calculator-grid">
+                    <div className="content-area">
+                        {/* LEFT COLUMN */}
                         <div>
-                            {/* Setup Tab */}
                             {activeTab === 'setup' && (
                                 <>
                                     <div className="card">
-                                        <h2 className="card-title">Pizza Style</h2>
-                                        <div className="style-selector">
-                                            {Object.entries(PIZZA_STYLES).map(([key, style]) => (
-                                                <button
-                                                    key={key}
-                                                    className={`style-button ${pizzaStyle === key ? 'active' : ''}`}
-                                                    onClick={() => setPizzaStyle(key)}
-                                                >
-                                                    {style.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="card" style={{marginTop: '2rem'}}>
-                                        <h2 className="card-title">Quantity</h2>
-                                        <div className="input-row">
-                                            <div className="input-group">
-                                                <label className="input-label">Number of Pizzas</label>
-                                                <input
-                                                    type="number"
-                                                    className="input-field"
-                                                    value={numPizzas}
-                                                    onChange={(e) => setNumPizzas(parseInt(e.target.value) || 1)}
-                                                    min="1"
-                                                    max="20"
-                                                />
-                                            </div>
-                                            <div className="input-group">
-                                                <label className="input-label">Dough Ball Weight (grams)</label>
-                                                <input
-                                                    type="number"
-                                                    className="input-field"
-                                                    value={doughBallWeight}
-                                                    onChange={(e) => setDoughBallWeight(parseInt(e.target.value) || 280)}
-                                                    min="100"
-                                                    max="1000"
-                                                    step="10"
-                                                />
-                                                <small style={{fontSize: '0.8rem', color: 'var(--crust)', marginTop: '0.5rem', display: 'block'}}>
-                                                    Reference: 10"≈220g | 12"≈280g | 14"≈350g | 16"≈420g | 18"≈520g
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="card" style={{marginTop: '2rem'}}>
-                                        <h2 className="card-title">Hydration</h2>
-                                        <div className="input-group">
-                                            <label className="input-label">Custom Hydration % (optional)</label>
-                                            <input
-                                                type="number"
-                                                className="input-field"
-                                                placeholder={`Default: ${styleConfig.hydration}%`}
-                                                value={customHydration || ''}
-                                                onChange={(e) => setCustomHydration(e.target.value ? parseFloat(e.target.value) : null)}
-                                                step="0.5"
-                                            />
-                                        </div>
-
-                                        <div className="hydration-indicator">
-                                            <div style={{fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem'}}>
-                                                Hydration Level: {hydration}%
-                                            </div>
-                                            <div className="hydration-bar">
-                                                <div className="hydration-fill" style={{width: `${Math.min(hydration, 100)}%`}}>
-                                                    {hydration}%
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-
-                            {/* Fermentation Tab */}
-                            {activeTab === 'fermentation' && (
-                                <>
-                                    <div className="card">
-                                        <h2 className="card-title">Yeast Type</h2>
-                                        <div className="input-group">
-                                            <label className="input-label">Select Yeast Type</label>
-                                            <select
-                                                className="select-field"
-                                                value={yeastType}
-                                                onChange={(e) => setYeastType(e.target.value)}
-                                            >
-                                                <option value="instant">Instant Dry Yeast (IDY) - Standard</option>
-                                                <option value="active-dry">Active Dry Yeast (ADY) - 25% more needed</option>
-                                                <option value="fresh">Fresh Yeast (Cake) - 3× more needed</option>
-                                                <option value="lemady">Lemady Yeast - Premium instant</option>
+                                        <h2>Pizza Style</h2>
+                                        <div className="form-group">
+                                            <label>Style Preset</label>
+                                            <select value={pizzaStyle} onChange={(e) => setPizzaStyle(e.target.value)}>
+                                                {Object.entries(PIZZA_STYLES).map(([key, style]) => (
+                                                    <option key={key} value={key}>{style.name}</option>
+                                                ))}
                                             </select>
-                                        </div>
-                                        <div className="info-box" style={{marginTop: '1rem'}}>
-                                            <strong>📊 Yeast Calculation:</strong><br/>
-                                            Base ({yeastCalc.totalHours.toFixed(1)}h): {(yeastCalc.baseYeast * 100).toFixed(2)}%<br/>
-                                            Temp factor: ×{yeastCalc.tempFactor.toFixed(2)}<br/>
-                                            = <strong>{(yeastPercentage * 100).toFixed(3)}% {yeastType} = {totalYeast}g</strong>
-                                        </div>
-                                    </div>
-
-                                    {styleConfig.fermentMethod === 'biga' && (
-                                        <div className="card" style={{marginTop: '2rem'}}>
-                                            <h2 className="card-title">Biga Settings</h2>
-                                            <div className="input-row">
-                                                <div className="input-group">
-                                                    <label className="input-label">Biga % of flour</label>
-                                                    <input
-                                                        type="number"
-                                                        className="input-field"
-                                                        value={customBigaPercent ?? ''}
-                                                        placeholder={`Default: ${styleConfig.bigaPercentage}%`}
-                                                        onChange={(e) => setCustomBigaPercent(e.target.value ? parseFloat(e.target.value) : null)}
-                                                        min="10"
-                                                        max="90"
-                                                    />
-                                                </div>
-                                                <div className="input-group">
-                                                    <label className="input-label">Biga hydration %</label>
-                                                    <input
-                                                        type="number"
-                                                        className="input-field"
-                                                        value={customBigaHydration ?? ''}
-                                                        placeholder={`Default: ${styleConfig.bigaHydration}%`}
-                                                        onChange={(e) => setCustomBigaHydration(e.target.value ? parseFloat(e.target.value) : null)}
-                                                        min="45"
-                                                        max="80"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-
-                            {/* Temperatures Tab */}
-                            {activeTab === 'temps' && (
-                                <>
-                                    <div className="card">
-                                        <h2 className="card-title">Temperatures</h2>
-                                        <div className="input-group">
-                                            <label className="input-label">Room Temperature (°C)</label>
-                                            <input
-                                                type="number"
-                                                className="input-field"
-                                                value={roomTemp}
-                                                onChange={(e) => setRoomTemp(parseFloat(e.target.value) || 20)}
-                                                step="0.5"
-                                            />
-                                        </div>
-                                        <div className="input-group">
-                                            <label className="input-label">Flour Temperature (°C)</label>
-                                            <input
-                                                type="number"
-                                                className="input-field"
-                                                value={flourTemp}
-                                                onChange={(e) => setFlourTemp(parseFloat(e.target.value) || 20)}
-                                                step="0.5"
-                                            />
-                                        </div>
-                                        <div className="input-group">
-                                            <label className="input-label">Desired Final Dough Temp (°C)</label>
-                                            <input
-                                                type="number"
-                                                className="input-field"
-                                                value={desiredFDT}
-                                                onChange={(e) => setDesiredFDT(parseFloat(e.target.value) || 24)}
-                                                step="0.5"
-                                            />
+                                            <p className="small-text" style={{marginTop: '0.5rem'}}>
+                                                {currentStyle.fermentationNotes}
+                                            </p>
                                         </div>
                                     </div>
 
                                     <div className="card" style={{marginTop: '2rem'}}>
-                                        <h2 className="card-title">Mixing Method</h2>
-                                        <div className="input-group">
-                                            <label className="input-label">Mixer Type</label>
-                                            <select
-                                                className="select-field"
-                                                value={mixerType}
-                                                onChange={(e) => setMixerType(e.target.value)}
-                                            >
-                                                <option value="no-knead">No-Knead (0°C friction)</option>
-                                                <option value="hand">Hand Mixing (6°C)</option>
-                                                <option value="low">Stand Mixer - Low (14°C)</option>
-                                                <option value="medium">Stand Mixer - Medium (22°C)</option>
-                                                <option value="spiral-low">Spiral Mixer - Low (18°C)</option>
-                                                <option value="spiral-high">Spiral Mixer - High (22°C)</option>
-                                                <option value="medium-high">Stand Mixer - Medium-High (26°C)</option>
-                                                <option value="high">Stand Mixer - High (28°C)</option>
-                                            </select>
+                                        <h2>Quantity</h2>
+                                        <div className="form-group">
+                                            <label>Number of Pizzas</label>
+                                            <input 
+                                                type="number" 
+                                                value={numPizzas} 
+                                                onChange={(e) => setNumPizzas(parseInt(e.target.value) || 1)}
+                                                min="1"
+                                                max="100"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Dough Ball Weight (grams)</label>
+                                            <input 
+                                                type="number" 
+                                                value={doughBallWeight} 
+                                                onChange={(e) => setDoughBallWeight(parseInt(e.target.value) || 250)}
+                                                min="100"
+                                                max="1000"
+                                                step="50"
+                                            />
+                                            <p className="small-text" style={{marginTop: '0.5rem'}}>
+                                                Typical: 250g (10"), 300g (12"), 550g (16")
+                                            </p>
                                         </div>
                                         <div className="info-box">
-                                            <strong>Water Temperature Needed:</strong> {waterTemp}°C
+                                            <p><strong>Total Flour Needed:</strong> {getTotalFlour()}g</p>
+                                            <p><strong>Hydration:</strong> {currentStyle.hydration}%</p>
                                         </div>
                                     </div>
                                 </>
                             )}
-                        </div>
 
-                        {/* Right Column */}
-                        <div>
-                            {/* Recipe Tab */}
-                            {activeTab === 'recipe' && (
-                                <>
-                                    {warnings.length > 0 && (
-                                        <div className="card" style={{marginBottom: '2rem'}}>
-                                            <h2 className="card-title">Warnings</h2>
-                                            {warnings.map((warning, i) => (
-                                                <div key={i} className="warning-box">{warning}</div>
-                                            ))}
+                            {activeTab === 'flour' && (
+                                <div className="card">
+                                    <h2>Flour Selection</h2>
+                                    
+                                    <div className="checkbox-group">
+                                        <input 
+                                            type="checkbox" 
+                                            id="autoFlour"
+                                            checked={autoFlourBlend}
+                                            onChange={(e) => setAutoFlourBlend(e.target.checked)}
+                                        />
+                                        <label htmlFor="autoFlour">Auto-recommend flour blend</label>
+                                    </div>
+
+                                    {autoFlourBlend && (
+                                        <div className="form-group">
+                                            <label>Dough Priority</label>
+                                            <select value={doughPriority} onChange={(e) => setDoughPriority(e.target.value)}>
+                                                <option value="balanced">Balanced</option>
+                                                <option value="extensible">Extensible (Easy to stretch)</option>
+                                                <option value="strength">Strength (Holds shape)</option>
+                                            </select>
                                         </div>
                                     )}
 
-                                    <div className="card">
-                                        <h2 className="card-title">Recipe</h2>
-                                        <div className="toggle-switch">
-                                            <span>Grams</span>
-                                            <label className="switch">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={showBakersPercentage}
-                                                    onChange={(e) => setShowBakersPercentage(e.target.checked)}
-                                                />
-                                                <span className="slider"></span>
-                                            </label>
-                                            <span>Baker's %</span>
-                                        </div>
-
-                                        <div className="results-section">
-                                            <div className="results-title">Flour Blend</div>
-                                            <div className="flour-blend">
-                                                {flourBlend.map((flour, i) => (
-                                                    <div key={i} className="flour-item">
-                                                        <div>
-                                                            <div className="ingredient-name">{flour.flourData.name}</div>
-                                                            <div style={{fontSize: '0.75rem', color: 'var(--crust)', marginTop: '0.25rem'}}>
-                                                                {flour.flourData.protein}% protein, W{flour.flourData.w}
-                                                            </div>
-                                                        </div>
-                                                        <div className="ingredient-amount">
-                                                            {showBakersPercentage ? `${flour.percentage}%` : `${flour.grams}g`}
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                    <h3>Your Flour Blend</h3>
+                                    {flourBlend.map((item, index) => {
+                                        const flour = FLOUR_DATABASE.find(f => f.id === item.flourId);
+                                        return (
+                                            <div key={index} className="flour-blend-item">
+                                                {autoFlourBlend ? (
+                                                    <>
+                                                        <strong>{flour.name}</strong>
+                                                        <p className="small-text">
+                                                            W: {flour.w_index} | P/L: {flour.pl_ratio} | Protein: {flour.protein}%
+                                                        </p>
+                                                        <p><strong>{item.percentage}%</strong> = {Math.round(getTotalFlour() * item.percentage / 100)}g</p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <select 
+                                                            value={item.flourId}
+                                                            onChange={(e) => {
+                                                                const newBlend = [...flourBlend];
+                                                                newBlend[index].flourId = e.target.value;
+                                                                setFlourBlend(newBlend);
+                                                            }}
+                                                        >
+                                                            {FLOUR_DATABASE.map(f => (
+                                                                <option key={f.id} value={f.id}>{f.name}</option>
+                                                            ))}
+                                                        </select>
+                                                        <input 
+                                                            type="number"
+                                                            value={item.percentage}
+                                                            onChange={(e) => {
+                                                                const newBlend = [...flourBlend];
+                                                                newBlend[index].percentage = parseInt(e.target.value) || 0;
+                                                                setFlourBlend(newBlend);
+                                                            }}
+                                                            min="0"
+                                                            max="100"
+                                                            style={{width: '80px', marginTop: '0.5rem'}}
+                                                        />
+                                                        <span>% = {Math.round(getTotalFlour() * item.percentage / 100)}g</span>
+                                                    </>
+                                                )}
                                             </div>
+                                        );
+                                    })}
+
+                                    {!autoFlourBlend && (
+                                        <div className="button-group">
+                                            <button onClick={() => setFlourBlend([...flourBlend, { flourId: 'casillo_la8', percentage: 0 }])}>
+                                                Add Flour
+                                            </button>
+                                            {flourBlend.length > 1 && (
+                                                <button 
+                                                    className="secondary"
+                                                    onClick={() => setFlourBlend(flourBlend.slice(0, -1))}
+                                                >
+                                                    Remove Last
+                                                </button>
+                                            )}
                                         </div>
-
-                                        {styleConfig.fermentMethod === 'biga' ? (
-                                            <>
-                                                <div className="results-section">
-                                                    <div className="results-title">Biga</div>
-                                                    <div className="ingredient-list">
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Flour</span>
-                                                            <span className="ingredient-amount">{ingredients.biga.flour}g</span>
-                                                        </div>
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Water</span>
-                                                            <span className="ingredient-amount">{ingredients.biga.water}g</span>
-                                                        </div>
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Yeast</span>
-                                                            <span className="ingredient-amount">{ingredients.biga.yeast}g</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="results-section">
-                                                    <div className="results-title">Final Dough</div>
-                                                    <div className="ingredient-list">
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Flour</span>
-                                                            <span className="ingredient-amount">{ingredients.final.flour}g</span>
-                                                        </div>
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Water ({waterTemp}°C)</span>
-                                                            <span className="ingredient-amount">{ingredients.final.water}g</span>
-                                                        </div>
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Salt</span>
-                                                            <span className="ingredient-amount">{ingredients.final.salt}g</span>
-                                                        </div>
-                                                        <div className="ingredient-item">
-                                                            <span className="ingredient-name">Yeast</span>
-                                                            <span className="ingredient-amount">{ingredients.final.yeast}g</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="results-section">
-                                                <div className="results-title">Ingredients</div>
-                                                <div className="ingredient-list">
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Flour</span>
-                                                        <span className="ingredient-amount">{ingredients.flour}g</span>
-                                                    </div>
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Water ({waterTemp}°C)</span>
-                                                        <span className="ingredient-amount">{ingredients.water}g</span>
-                                                    </div>
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Salt</span>
-                                                        <span className="ingredient-amount">{ingredients.salt}g</span>
-                                                    </div>
-                                                    <div className="ingredient-item">
-                                                        <span className="ingredient-name">Yeast</span>
-                                                        <span className="ingredient-amount">{ingredients.yeast}g</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-
-                            {/* Save Tab */}
-                            {activeTab === 'save' && (
-                                <div className="card">
-                                    <h2 className="card-title">Save Recipe</h2>
-                                    <div className="recipe-name-input">
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            placeholder="Enter recipe name..."
-                                            value={recipeName}
-                                            onChange={(e) => setRecipeName(e.target.value)}
-                                        />
-                                    </div>
-                                    <button className="button button-primary" onClick={saveRecipe} style={{width: '100%'}}>
-                                        Save Recipe
-                                    </button>
+                                    )}
                                 </div>
                             )}
 
-                            {/* Placeholder for other tabs */}
-                            {(activeTab === 'setup' || activeTab === 'fermentation' || activeTab === 'temps') && (
+                            {activeTab === 'fermentation' && (
                                 <div className="card">
-                                    <h2 className="card-title">Quick Summary</h2>
-                                    <div className="info-box">
-                                        <strong>{numPizzas} pizzas × {doughBallWeight}g</strong><br/>
-                                        {styleConfig.name} • {hydration}% hydration<br/>
-                                        Total flour: {totalFlour}g<br/>
-                                        Water temp: {waterTemp}°C
+                                    <h2>Fermentation Settings</h2>
+                                    
+                                    <div className="form-group">
+                                        <label>Yeast Type</label>
+                                        <select value={yeastType} onChange={(e) => setYeastType(e.target.value)}>
+                                            <option value="instant">Instant Dry Yeast</option>
+                                            <option value="active-dry">Active Dry Yeast</option>
+                                            <option value="fresh">Fresh Yeast</option>
+                                            <option value="lemady">Lemady Yeast</option>
+                                        </select>
                                     </div>
+
+                                    <h3>Biga Settings</h3>
+                                    <div className="form-group">
+                                        <label>Biga % of Total Flour</label>
+                                        <input 
+                                            type="number"
+                                            value={customBigaPercent}
+                                            onChange={(e) => setCustomBigaPercent(e.target.value)}
+                                            placeholder={`Default: ${currentStyle.bigaPercent}%`}
+                                            min="0"
+                                            max="100"
+                                        />
+                                        <p className="small-text">Leave blank to use style default ({currentStyle.bigaPercent}%)</p>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Biga Hydration %</label>
+                                        <input 
+                                            type="number"
+                                            value={customBigaHydration}
+                                            onChange={(e) => setCustomBigaHydration(e.target.value)}
+                                            placeholder={`Default: ${currentStyle.bigaHydration}%`}
+                                            min="40"
+                                            max="100"
+                                        />
+                                        <p className="small-text">Leave blank to use style default ({currentStyle.bigaHydration}%)</p>
+                                    </div>
+
+                                    <h3>Fermentation Duration</h3>
+                                    <div className="form-group">
+                                        <label>Bulk Fermentation (hours)</label>
+                                        <input 
+                                            type="number"
+                                            value={customBulkHours}
+                                            onChange={(e) => setCustomBulkHours(e.target.value)}
+                                            placeholder={`Default: ${currentStyle.bulkFermentHours}h`}
+                                            min="0"
+                                            max="48"
+                                            step="0.5"
+                                        />
+                                        <p className="small-text">At {bulkFermentTemp}°C (set in Temperatures tab)</p>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Cold Fermentation (hours)</label>
+                                        <input 
+                                            type="number"
+                                            value={customColdHours}
+                                            onChange={(e) => setCustomColdHours(e.target.value)}
+                                            placeholder={`Default: ${currentStyle.coldFermentHours}h`}
+                                            min="0"
+                                            max="120"
+                                            step="0.5"
+                                        />
+                                        <p className="small-text">At {coldFermentTemp}°C (set in Temperatures tab)</p>
+                                    </div>
+
+                                    <div className="info-box">
+                                        <p><strong>Calculated Yeast:</strong> {yeastData.grams}g ({yeastData.percent}%)</p>
+                                        <p className="small-text">
+                                            Factors: Time×{yeastData.factors.timeAdj}, Salt×{yeastData.factors.saltAdj}, 
+                                            Hydration×{yeastData.factors.hydrationAdj}, Biga×{yeastData.factors.bigaAdj}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'temps' && (
+                                <>
+                                    <div className="card">
+                                        <h2>Temperature Settings</h2>
+                                        
+                                        <div className="form-group">
+                                            <label>Bulk Fermentation Temp (°C)</label>
+                                            <input 
+                                                type="number"
+                                                value={bulkFermentTemp}
+                                                onChange={(e) => setBulkFermentTemp(parseInt(e.target.value) || 20)}
+                                                min="15"
+                                                max="30"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Cold Fermentation Temp (°C)</label>
+                                            <input 
+                                                type="number"
+                                                value={coldFermentTemp}
+                                                onChange={(e) => setColdFermentTemp(parseInt(e.target.value) || 4)}
+                                                min="2"
+                                                max="10"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="card" style={{marginTop: '2rem'}}>
+                                        <h2>Mixing Method</h2>
+                                        
+                                        <div className="form-group">
+                                            <label>Mixer Type</label>
+                                            <select value={mixerType} onChange={(e) => setMixerType(e.target.value)}>
+                                                <option value="hand">Hand Mix</option>
+                                                <option value="stand_low">Stand Mixer - Low Speed</option>
+                                                <option value="stand_high">Stand Mixer - High Speed</option>
+                                                <option value="spiral_low">Spiral Mixer - Low Speed</option>
+                                                <option value="spiral_high">Spiral Mixer - High Speed</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Room Temperature (°C)</label>
+                                            <input 
+                                                type="number"
+                                                value={roomTemp}
+                                                onChange={(e) => setRoomTemp(parseInt(e.target.value) || 20)}
+                                                min="10"
+                                                max="35"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Flour Temperature (°C)</label>
+                                            <input 
+                                                type="number"
+                                                value={flourTemp}
+                                                onChange={(e) => setFlourTemp(parseInt(e.target.value) || 20)}
+                                                min="10"
+                                                max="30"
+                                            />
+                                        </div>
+
+                                        <div className="info-box">
+                                            <p><strong>Water Temperature Needed:</strong> {getWaterTemp()}°C</p>
+                                            <p className="small-text">
+                                                Formula: (FDT × 4) - flour temp - room temp - friction factor
+                                            </p>
+                                            <p className="small-text">
+                                                Target Final Dough Temp: {currentStyle.finalDoughTemp}°C
+                                            </p>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {activeTab === 'timeline' && (
+                                <div className="card">
+                                    <h2>Timeline Mode</h2>
+                                    
+                                    <div className="form-group">
+                                        <label>Timeline Type</label>
+                                        <select value={timelineMode} onChange={(e) => setTimelineMode(e.target.value)}>
+                                            <option value="forward">Forward (Starting Now)</option>
+                                            <option value="reverse">Reverse (From Bake Time)</option>
+                                        </select>
+                                    </div>
+
+                                    {timelineMode === 'reverse' && (
+                                        <>
+                                            <div className="form-group">
+                                                <label>Target Bake Date</label>
+                                                <input 
+                                                    type="date"
+                                                    value={targetBakeDate}
+                                                    onChange={(e) => setTargetBakeDate(e.target.value)}
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label>Target Bake Time</label>
+                                                <input 
+                                                    type="time"
+                                                    value={targetBakeTime}
+                                                    onChange={(e) => setTargetBakeTime(e.target.value)}
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'save' && (
+                                <div className="card">
+                                    <h2>Save & Export</h2>
+                                    
+                                    <div className="button-group" style={{flexDirection: 'column'}}>
+                                        <button onClick={saveRecipe}>💾 Save Recipe</button>
+                                        <button onClick={loadRecipe} className="secondary">📂 Load Recipe</button>
+                                        <button onClick={exportRecipe}>📄 Export to Text File</button>
+                                    </div>
+
+                                    <p className="small-text" style={{marginTop: '1rem'}}>
+                                        Recipes are saved to your browser's local storage.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* RIGHT COLUMN */}
+                        <div>
+                            {(activeTab === 'setup' || activeTab === 'recipe') && (
+                                <div className="card">
+                                    <h2>Complete Recipe</h2>
+                                    
+                                    {getBigaPercent() > 0 && (
+                                        <>
+                                            <h3>BIGA ({getBigaPercent()}%)</h3>
+                                            <div className="ingredient-item">
+                                                <span>Flour</span>
+                                                <strong>{getBigaFlour()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Water ({getBigaHydration()}%)</span>
+                                                <strong>{getBigaWater()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Yeast ({yeastType})</span>
+                                                <strong>{getBigaYeast()}g</strong>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <h3>{getBigaPercent() > 0 ? 'MAIN DOUGH' : 'INGREDIENTS'}</h3>
+                                    {getBigaPercent() > 0 ? (
+                                        <>
+                                            <div className="ingredient-item">
+                                                <span>Flour</span>
+                                                <strong>{getMainDoughFlour()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Water</span>
+                                                <strong>{getMainDoughWater()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Yeast ({yeastType})</span>
+                                                <strong>{getMainDoughYeast()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Biga (from above)</span>
+                                                <strong>All of it</strong>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="ingredient-item">
+                                                <span>Flour</span>
+                                                <strong>{getTotalFlour()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Water ({currentStyle.hydration}%)</span>
+                                                <strong>{getTotalWater()}g</strong>
+                                            </div>
+                                            <div className="ingredient-item">
+                                                <span>Yeast ({yeastData.percent}%)</span>
+                                                <strong>{yeastData.grams}g {yeastType}</strong>
+                                            </div>
+                                        </>
+                                    )}
+                                    <div className="ingredient-item">
+                                        <span>Salt ({currentStyle.saltPercent}%)</span>
+                                        <strong>{getSalt()}g</strong>
+                                    </div>
+
+                                    <h3>Quick Summary</h3>
+                                    <div className="success-box">
+                                        <p><strong>{numPizzas} pizzas × {doughBallWeight}g</strong></p>
+                                        <p>{currentStyle.name} • {currentStyle.hydration}% hydration</p>
+                                        <p>Total flour: {getTotalFlour()}g</p>
+                                        <p>Water temp: {getWaterTemp()}°C</p>
+                                    </div>
+
+                                    {health.warnings.length > 0 && (
+                                        <>
+                                            <h3>Recommendations</h3>
+                                            {health.warnings.map((warning, i) => (
+                                                <div key={i} className="warning-box">
+                                                    <p>⚠️  {warning}</p>
+                                                </div>
+                                            ))}
+                                        </>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'flour' && (
+                                <div className="card">
+                                    <h2>Flour Database</h2>
+                                    <p className="small-text">Your available flours</p>
+                                    
+                                    {FLOUR_DATABASE.map(flour => (
+                                        <div key={flour.id} className="flour-blend-item" style={{marginTop: '1rem'}}>
+                                            <strong>{flour.name}</strong>
+                                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.5rem'}}>
+                                                <p className="small-text">W Index: {flour.w_index}</p>
+                                                <p className="small-text">P/L Ratio: {flour.pl_ratio}</p>
+                                                <p className="small-text">Protein: {flour.protein}%</p>
+                                                <p className="small-text">Absorption: {flour.absorption}%</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {activeTab === 'fermentation' && (
+                                <div className="card">
+                                    <h2>Fermentation Summary</h2>
+                                    
+                                    <div className="info-box">
+                                        <p><strong>Total Fermentation Time:</strong> {getBulkHours() + getColdHours()} hours</p>
+                                        <p>• Bulk: {getBulkHours()}h at {bulkFermentTemp}°C</p>
+                                        <p>• Cold: {getColdHours()}h at {coldFermentTemp}°C</p>
+                                    </div>
+
+                                    <h3>Yeast Breakdown</h3>
+                                    <div className="success-box">
+                                        <p><strong>Total Yeast: {yeastData.grams}g ({yeastData.percent}%)</strong></p>
+                                        {getBigaPercent() > 0 && (
+                                            <>
+                                                <p>• Biga: {getBigaYeast()}g</p>
+                                                <p>• Main Dough: {getMainDoughYeast()}g</p>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <h3>Calculation Factors</h3>
+                                    <div className="ingredient-item">
+                                        <span>Time Adjustment</span>
+                                        <strong>×{yeastData.factors.timeAdj}</strong>
+                                    </div>
+                                    <div className="ingredient-item">
+                                        <span>Salt Factor</span>
+                                        <strong>×{yeastData.factors.saltAdj}</strong>
+                                    </div>
+                                    <div className="ingredient-item">
+                                        <span>Hydration Factor</span>
+                                        <strong>×{yeastData.factors.hydrationAdj}</strong>
+                                    </div>
+                                    <div className="ingredient-item">
+                                        <span>Biga Factor</span>
+                                        <strong>×{yeastData.factors.bigaAdj}</strong>
+                                    </div>
+
+                                    <p className="small-text" style={{marginTop: '1rem'}}>
+                                        Yeast calculation uses Q10=2 rule for temperature adjustment.
+                                        Reference: 0.2% instant yeast for 24h at 20°C.
+                                    </p>
+                                </div>
+                            )}
+
+                            {activeTab === 'temps' && (
+                                <div className="card">
+                                    <h2>Quick Summary</h2>
+                                    
+                                    <div className="info-box">
+                                        <p><strong>{numPizzas} pizzas × {doughBallWeight}g</strong></p>
+                                        <p>{currentStyle.name} • {currentStyle.hydration}% hydration</p>
+                                        <p>Total flour: {getTotalFlour()}g</p>
+                                        <p>Water temp: {getWaterTemp()}°C</p>
+                                    </div>
+
+                                    <h3>Mixing Method</h3>
+                                    <div className="success-box">
+                                        <p><strong>Mixer:</strong> {mixerType.replace('_', ' ').toUpperCase()}</p>
+                                        <p><strong>Friction Factor:</strong> {getFrictionFactor()}°C</p>
+                                        <p><strong>Target FDT:</strong> {currentStyle.finalDoughTemp}°C</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'timeline' && (
+                                <div className="card">
+                                    <h2>Timeline</h2>
+                                    <p className="small-text">
+                                        {timelineMode === 'forward' ? 
+                                            'Starting from now...' : 
+                                            'Working backwards from bake time...'}
+                                    </p>
+                                    
+                                    {generateTimeline().map((step, index) => (
+                                        <div key={index} className="timeline-item">
+                                            <strong>{step.time}</strong>
+                                            <p style={{fontSize: '1.1rem', color: 'var(--primary)', margin: '0.5rem 0'}}>
+                                                {step.action}
+                                            </p>
+                                            <p>{step.detail}</p>
+                                            {step.temperature && (
+                                                <p className="small-text" style={{marginTop: '0.5rem', color: 'var(--char-light)'}}>
+                                                    {step.temperature}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {activeTab === 'save' && (
+                                <div className="card">
+                                    <h2>Instructions</h2>
+                                    
+                                    <h3>Save Recipe</h3>
+                                    <p>Saves your current configuration to browser storage. You can save multiple recipes and load them later.</p>
+
+                                    <h3>Load Recipe</h3>
+                                    <p>Load a previously saved recipe. All settings will be restored.</p>
+
+                                    <h3>Export to Text</h3>
+                                    <p>Downloads a complete text file with your recipe, timeline, and notes. Perfect for printing or sharing.</p>
                                 </div>
                             )}
                         </div>
@@ -1404,33 +1648,7 @@
             );
         }
 
-        const mountApp = () => {
-            const container = document.getElementById('root');
-            if (!container) return;
-            try {
-                container.dataset.hasApp = '1';
-                if (window.ReactDOM && typeof ReactDOM.render === 'function') {
-                    ReactDOM.render(<PizzaCalculator />, container);
-                } else {
-                    throw new Error('ReactDOM.render not found');
-                }
-            } catch (err) {
-                container.innerHTML = '';
-                const pre = document.createElement('pre');
-                pre.style.whiteSpace = 'pre-wrap';
-                pre.style.padding = '16px';
-                pre.style.margin = '16px auto';
-                pre.style.maxWidth = '900px';
-                pre.style.background = 'rgba(255,255,255,0.8)';
-                pre.style.border = '1px solid rgba(0,0,0,0.1)';
-                pre.style.borderRadius = '12px';
-                pre.textContent = 'App failed to start\n\n' + (err && err.stack ? err.stack : String(err));
-                container.appendChild(pre);
-            }
-        };
-
-        setTimeout(mountApp, 0);
-
+        ReactDOM.render(<PizzaCalculator />, document.getElementById('root'));
     </script>
 </body>
 </html>
