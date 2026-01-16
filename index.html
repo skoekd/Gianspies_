@@ -560,7 +560,7 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel" data-presets="env,react">
+    <script type="text/babel" data-presets="env,react" data-plugins="proposal-optional-chaining,proposal-nullish-coalescing-operator">
         // Show uncaught errors (helps avoid blank screen on mobile Safari)
         window.addEventListener('error', (e) => {
             const container = document.getElementById('root');
