@@ -558,10 +558,12 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root" style="max-width:900px;margin:16px auto;font-family:Work Sans, sans-serif;color:#3A3226;">Loading…</div>
 
-    <script type="text/babel" data-presets="env,react" data-plugins="proposal-optional-chaining,proposal-nullish-coalescing-operator">
-        // Show uncaught errors (helps avoid blank screen on mobile Safari)
+    
+
+<script id="app-jsx" type="text/plain">
+// Show uncaught errors (helps avoid blank screen on mobile Safari)
         window.addEventListener('error', (e) => {
             const container = document.getElementById('root');
             if (!container) return;
@@ -2371,7 +2373,55 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
         };
 
         setTimeout(mountApp, 0);
+</script>
+<script>
+(function(){
+  function show(msg){
+    var el=document.getElementById('root');
+    if(el){
+      el.innerHTML='';
+      var pre=document.createElement('pre');
+      pre.style.whiteSpace='pre-wrap';
+      pre.style.padding='16px';
+      pre.style.margin='16px auto';
+      pre.style.maxWidth='900px';
+      pre.style.background='rgba(255,255,255,0.9)';
+      pre.style.border='1px solid rgba(0,0,0,0.12)';
+      pre.style.borderRadius='12px';
+      pre.style.fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+      pre.textContent=msg;
+      el.appendChild(pre);
+    }
+  }
+  function run(){
+    try{
+      if(!window.Babel || !window.Babel.transform){
+        show('Babel failed to load. Check that https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js is reachable.');
+        return;
+      }
+      var node=document.getElementById('app-jsx');
+      if(!node){
+        show('Missing app source block.');
+        return;
+      }
+      var src=node.textContent || node.innerText || '';
+      var out=window.Babel.transform(src, {
+        presets: ['env','react'],
+        plugins: ['proposal-optional-chaining','proposal-nullish-coalescing-operator']
+      }).code;
+      (new Function(out))();
+    }catch(e){
+      show('App failed to start
 
-    </script>
+' + (e && e.stack ? e.stack : String(e)));
+    }
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  }else{
+    run();
+  }
+})();
+</script>
 </body>
 </html>
