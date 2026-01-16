@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizza Dough Calculator - Professional Recipe Builder</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -560,7 +560,27 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script type="text/babel" data-presets="env,react">
+        // Show uncaught errors (helps avoid blank screen on mobile Safari)
+        window.addEventListener('error', (e) => {
+            const container = document.getElementById('root');
+            if (!container) return;
+            // If app already rendered, do not overwrite
+            if (container.dataset && container.dataset.hasApp === '1') return;
+            container.innerHTML = '';
+            const pre = document.createElement('pre');
+            pre.style.whiteSpace = 'pre-wrap';
+            pre.style.padding = '16px';
+            pre.style.margin = '16px auto';
+            pre.style.maxWidth = '900px';
+            pre.style.background = 'rgba(255,255,255,0.8)';
+            pre.style.border = '1px solid rgba(0,0,0,0.1)';
+            pre.style.borderRadius = '12px';
+            pre.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+            pre.textContent = 'Uncaught error\n\n' + (e.error && e.error.stack ? e.error.stack : (e.message || String(e)));
+            container.appendChild(pre);
+        });
+
         const { useState, useEffect } = React;
 
         // Flour database
@@ -2324,8 +2344,39 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
             );
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<PizzaCalculator />);
+        
+        // Robust mount (React 18 createRoot when available, fallback to legacy render)
+        const mountApp = () => {
+            const container = document.getElementById('root');
+            if (!container) throw new Error('Missing #root element');
+            try {
+                container.dataset.hasApp = '1';
+                if (ReactDOM && typeof ReactDOM.createRoot === 'function') {
+                    ReactDOM.createRoot(container).render(<PizzaCalculator />);
+                } else if (ReactDOM && typeof ReactDOM.render === 'function') {
+                    ReactDOM.render(<PizzaCalculator />, container);
+                } else {
+                    throw new Error('ReactDOM mount API not found');
+                }
+            } catch (err) {
+                container.innerHTML = '';
+                const pre = document.createElement('pre');
+                pre.style.whiteSpace = 'pre-wrap';
+                pre.style.padding = '16px';
+                pre.style.margin = '16px auto';
+                pre.style.maxWidth = '900px';
+                pre.style.background = 'rgba(255,255,255,0.8)';
+                pre.style.border = '1px solid rgba(0,0,0,0.1)';
+                pre.style.borderRadius = '12px';
+                pre.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+                pre.textContent = 'App failed to start\n\n' + (err && err.stack ? err.stack : String(err));
+                container.appendChild(pre);
+            }
+        };
+
+        // Wait a tick to ensure Babel has finished transforming
+        setTimeout(mountApp, 0);
+
     </script>
 </body>
 </html>
