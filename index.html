@@ -3,10 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Dough Calculator - Professional Recipe Builder</title>
-    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
-    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    
+    <script>
+      (function(){
+        var root=document.getElementById('root');
+        function show(msg){
+          var el=document.getElementById('root');
+          if(!el) return;
+          el.innerHTML='';
+          var pre=document.createElement('pre');
+          pre.style.whiteSpace='pre-wrap';
+          pre.style.padding='16px';
+          pre.style.margin='16px auto';
+          pre.style.maxWidth='900px';
+          pre.style.background='rgba(255,255,255,0.9)';
+          pre.style.border='1px solid rgba(0,0,0,0.12)';
+          pre.style.borderRadius='12px';
+          pre.style.fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+          pre.textContent=msg;
+          el.appendChild(pre);
+        }
+        function loadOne(urls, done){
+          var i=0;
+          function next(){
+            if(i>=urls.length){
+              done(new Error('Failed to load script from all sources: '+urls.join(', ')));
+              return;
+            }
+            var url=urls[i++];
+            var s=document.createElement('script');
+            s.crossOrigin='anonymous';
+            s.src=url;
+            var settled=false;
+            var t=setTimeout(function(){
+              if(settled) return;
+              settled=true;
+              try{s.remove();}catch(e){}
+              next();
+            }, 8000);
+            s.onload=function(){
+              if(settled) return;
+              settled=true;
+              clearTimeout(t);
+              done(null);
+            };
+            s.onerror=function(){
+              if(settled) return;
+              settled=true;
+              clearTimeout(t);
+              try{s.remove();}catch(e){}
+              next();
+            };
+            document.head.appendChild(s);
+          }
+          next();
+        }
+        window.__gianspies_loadDeps = function(cb){
+          // React
+          loadOne([
+            'https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js',
+            'https://unpkg.com/react@17/umd/react.production.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js'
+          ], function(err){
+            if(err){ show('Could not load React\n\n'+err.message); cb(err); return; }
+            // ReactDOM
+            loadOne([
+              'https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js',
+              'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
+              'https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js'
+            ], function(err2){
+              if(err2){ show('Could not load ReactDOM\n\n'+err2.message); cb(err2); return; }
+              // Babel Standalone
+              loadOne([
+                'https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js',
+                'https://unpkg.com/@babel/standalone/babel.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js'
+              ], function(err3){
+                if(err3){ show('Could not load Babel\n\n'+err3.message); cb(err3); return; }
+                cb(null);
+              });
+            });
+          });
+        };
+      })();
+    </script>
+<title>Pizza Dough Calculator - Professional Recipe Builder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -2393,10 +2474,10 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
       el.appendChild(pre);
     }
   }
-  function run(){
+  function compileAndRun(){
     try{
       if(!window.Babel || !window.Babel.transform){
-        show('Babel failed to load. Check that https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js is reachable.');
+        show('Babel failed to load.');
         return;
       }
       var node=document.getElementById('app-jsx');
@@ -2411,15 +2492,24 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
       }).code;
       (new Function(out))();
     }catch(e){
-      show('App failed to start
-
-' + (e && e.stack ? e.stack : String(e)));
+      show('App failed to start\n\n' + (e && e.stack ? e.stack : String(e)));
     }
   }
+  function start(){
+    if(typeof window.__gianspies_loadDeps !== 'function'){
+      // Should never happen, but keep it non-silent.
+      compileAndRun();
+      return;
+    }
+    window.__gianspies_loadDeps(function(err){
+      if(err) return; // error already displayed
+      compileAndRun();
+    });
+  }
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded', run);
+    document.addEventListener('DOMContentLoaded', start);
   }else{
-    run();
+    start();
   }
 })();
 </script>
