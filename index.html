@@ -2324,7 +2324,8 @@ ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 
             );
         }
 
-        ReactDOM.render(<PizzaCalculator />, document.getElementById('root'));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PizzaCalculator />);
     </script>
 </body>
 </html>
